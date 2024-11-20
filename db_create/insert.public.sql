@@ -2,12 +2,7 @@
 
 INSERT INTO genders (gender) VALUES ('Mujer'),('Hombre'),('Otro');
 
-INSERT INTO country (country) VALUES ('Afganistán'),('Islas Gland'),('Albania'),('Alemania'),('Andorra'),('Angola'),('Anguilla'),
-('Antártida'),('Antigua y Barbuda'),('Antillas Holandesas'),('Arabia Saudí'),('Argelia'),('Argentina'),('Armenia'),('Aruba'),
-('Australia'),('Austria'),('Azerbaiyán'),('Bahamas'),('Bahréin'),('Bangladesh'),('Barbados'),('Bielorrusia'),('Bélgica'),
-('Belice'),('Benin'),('Bermudas'),('Bhután'),('Bolivia'),('Bosnia y Herzegovina'),('Botsuana'),('Isla Bouvet'),('Brasil'),
-('Brunéi'),('Bulgaria'),('Burkina Faso'),('Burundi'),('Cabo Verde'),('Islas Caimán'),('Camboya'),('Camerún'),('Canadá'),
-('República Centroafricana'),('Chad'),('República Checa'),('Chile'),('China'),('Chipre'),('Isla de Navidad'),
+INSERT INTO country (countries) VALUES ('Afganistán'),('Islas Gland'),('Albania'),('Alemania'),('Andorra'),('Angola'),('Anguilla'),('Antártida'),('Antigua y Barbuda'),('Antillas Holandesas'),('Arabia Saudí'),('Argelia'),('Argentina'),('Armenia'),('Aruba'),('Australia'),('Austria'),('Azerbaiyán'),('Bahamas'),('Bahréin'),('Bangladesh'),('Barbados'),('Bielorrusia'),('Bélgica'),('Belice'),('Benin'),('Bermudas'),('Bhután'),('Bolivia'),('Bosnia y Herzegovina'),('Botsuana'),('Isla Bouvet'),('Brasil'),('Brunéi'),('Bulgaria'),('Burkina Faso'),('Burundi'),('Cabo Verde'),('Islas Caimán'),('Camboya'),('Camerún'),('Canadá'),('República Centroafricana'),('Chad'),('República Checa'),('Chile'),('China'),('Chipre'),('Isla de Navidad'),
 ('Ciudad del Vaticano'),('Islas Cocos'),('Colombia'),('Comoras'),('República Democrática del Congo'),('Congo'),
 ('Islas Cook'),('Corea del Norte'),('Corea del Sur'),('Costa de Marfil'),('Costa Rica'),('Croacia'),('Cuba'),
 ('Dinamarca'),('Dominica'),('República Dominicana'),('Ecuador'),('Egipto'),('El Salvador'),('Emiratos Árabes Unidos'),

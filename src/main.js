@@ -1,5 +1,5 @@
-const dotenv = require('dotenv').config();
 const fastify = require('fastify')()
+require('dotenv').config()
 
 
 fastify.get('/', async (request, reply) => {
@@ -7,7 +7,7 @@ fastify.get('/', async (request, reply) => {
 })
 
 // Nombre de las rutas
-const routeName = ['archievement']
+const routeName = ['archievement', 'user', 'worker']
 
 routeName.forEach((route) => {
     fastify.register(require(`./routes/route.${route}.js`), { prefix: `${route}` })

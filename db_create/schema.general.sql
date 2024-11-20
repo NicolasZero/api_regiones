@@ -13,9 +13,10 @@ CREATE TABLE IF NOT EXISTS general.workers (
     position_id integer NOT NULL,
     payroll_type_id integer NOT NULL,
     area_coordination_id integer NOT NULL DEFAULT 0,
-    status varchar NOT NULL DEFAULT true,
+    status varchar NOT NULL DEFAULT 'ACTIVO',
     created date DEFAULT CURRENT_DATE,
-    updated date
+    updated date,
+    primary key(id)
 );
 
 CREATE TABLE IF NOT EXISTS general.location(
@@ -24,7 +25,8 @@ CREATE TABLE IF NOT EXISTS general.location(
     state_id integer NOT NULL,
     municipality_id integer NOT NULL,
     parish_id integer NOT NULL,
-    address text DEFAULT ''
+    address text DEFAULT '',
+    primary key(id)
 );
 
 CREATE TABLE IF NOT EXISTS general.contact(
@@ -33,27 +35,32 @@ CREATE TABLE IF NOT EXISTS general.contact(
     email varchar(200) DEFAULT '',
     email2 varchar(200) DEFAULT '',
     phone varchar(20) DEFAULT '',
-    phone2 varchar(20) DEFAULT ''
+    phone2 varchar(20) DEFAULT '',
+    primary key(id)
 );
 
 CREATE TABLE IF NOT EXISTS general.department(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    department varchar(200) NOT NULL UNIQUE
+    department varchar(200) NOT NULL UNIQUE,
+    primary key(id)
 );
 
 CREATE TABLE IF NOT EXISTS general.position(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    position varchar(200) NOT NULL UNIQUE
+    position varchar(200) NOT NULL UNIQUE,
+    primary key(id)
 );
 
 CREATE TABLE IF NOT EXISTS general.payroll_type(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    name varchar(200) NOT NULL UNIQUE
+    name varchar(200) NOT NULL UNIQUE,
+    primary key(id)
 );
 
 CREATE TABLE IF NOT EXISTS general.area_coordination(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    area varchar(200) NOT NULL UNIQUE
+    area varchar(200) NOT NULL UNIQUE,
+    primary key(id)
 );
 
 ALTER TABLE general.workers ADD CONSTRAINT fk_workers_gender_id FOREIGN KEY (gender_id) references genders(id);

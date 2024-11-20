@@ -22,7 +22,8 @@ create table regions.achievements (
     status_id integer NOT NULL DEFAULT 1,
     country_id integer NOT NULL DEFAULT 1,
     created date DEFAULT CURRENT_DATE,
-    updated date
+    updated date,
+    primary key(id)
 );
 
 create table regions.users (
@@ -33,37 +34,44 @@ create table regions.users (
     role_id integer NOT NULL,
     is_active boolean NOT NULL DEFAULT true,
     created date DEFAULT CURRENT_DATE,
-    updated date
+    updated date,
+    primary key(id)
 );
 
 CREATE TABLE regions.roles(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    role varchar(100) NOT NULL UNIQUE
+    role varchar(100) NOT NULL UNIQUE,
+    primary key(id)
 );
 
 CREATE TABLE regions.type_action(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    type_action varchar(100) NOT NULL UNIQUE
+    type_action varchar(100) NOT NULL UNIQUE,
+    primary key(id)
 );
 
 CREATE TABLE regions.type_activity(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    type_activity varchar(100) NOT NULL UNIQUE
+    type_activity varchar(100) NOT NULL UNIQUE,
+    primary key(id)
 );
 
 CREATE TABLE regions.type_telephone_service(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    type_telephone_service varchar(100) NOT NULL UNIQUE
+    type_telephone_service varchar(100) NOT NULL UNIQUE,
+    primary key(id)
 );
 
 CREATE TABLE regions.place(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    place varchar(100) NOT NULL UNIQUE
+    place varchar(100) NOT NULL UNIQUE,
+    primary key(id)
 );
 
 CREATE TABLE regions.status(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    status varchar(100) NOT NULL UNIQUE
+    status varchar(100) NOT NULL UNIQUE,
+    primary key(id)
 );
 
 
