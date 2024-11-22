@@ -37,6 +37,7 @@ const getWorkerByIc = async (request, reply) => {
 
 const setWorker = async (request, reply) => {
     try {
+        return "En progreso"
         if (!request.body) {
             return reply.code(400).send({ error: "body not valid", status: "failed" });
         }
@@ -57,7 +58,7 @@ const setWorker = async (request, reply) => {
     }
 }
 
-const changeWorkerStatus = async (request, reply) => {
+const updateWorker = async (request, reply) => {
     try {
         if (!request.body) {
             return reply.code(400).send({ error: "body not valid", status: "failed" });
@@ -83,5 +84,5 @@ module.exports = {
     getWorkerById,
     getWorkerByIc,
     setWorker,
-    changeWorkerStatus
+    updateWorker
 }

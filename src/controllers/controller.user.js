@@ -23,22 +23,23 @@ const getUserById = async (request, reply) => {
     }
 }
 
-const setUser = async (request, reply) => {
+const updatetUser = async (request, reply) => {
     try {
-        if (!request.body) {
-            return reply.code(400).send({ error: "body not valid", status: "failed" });
-        }
+        // if (!request.body) {
+        //     return reply.code(400).send({ error: "body not valid", status: "failed" });
+        // }
 
-        const {worker_id, username, password, role_id} = request.body
+        // const {worker_id, username, password, role_id} = request.body
 
         // Request body verification
-        if (worker_id !== "number" || typeof role_id !== "number" || typeof username !== "string" || typeof password !== "string") {
-            return reply.code(400).send({ error: "body not valid", status: "failed" })
-        }
+        // if (worker_id !== "number" || typeof role_id !== "number" || typeof username !== "string" || typeof password !== "string") {
+        //     return reply.code(400).send({ error: "body not valid", status: "failed" })
+        // }
 
-        const textQuery = `INSERT INTO regions.users (worker_id, username, password, role_id) VALUES ($1, $2, $3, $4);`
-        const resp = await query(textQuery,[worker_id, username, password, role_id])
-        return reply.send({status: "ok", msg:`Se encontro ${resp.rowCount} resultado`, data: resp.rows[0]});
+        // const textQuery = `INSERT INTO regions.users (worker_id, username, password, role_id) VALUES ($1, $2, $3, $4);`
+        // const resp = await query(textQuery,[worker_id, username, password, role_id])
+        // return reply.send({status: "ok", msg:`Se encontro ${resp.rowCount} resultado`, data: resp.rows[0]});
+        return "En progreso"
     } catch (error) {
         console.log(error) ;
         return reply.code(500).send({ error: "error en la peticion", status: "failed" });
@@ -69,6 +70,6 @@ const changeUserStatus = async (request, reply) => {
 module.exports = {
     getAllUser,
     getUserById,
-    setUser,
+    updatetUser,
     changeUserStatus
 }

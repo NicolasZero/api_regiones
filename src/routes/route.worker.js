@@ -5,5 +5,5 @@ module.exports = async function (fastify) {
     fastify.get("/id/:id", controller.getWorkerById)
     fastify.get("/ic/:ic", controller.getWorkerByIc)
     fastify.post("/", controller.setWorker)
-    fastify.put("/", controller.changeWorkerStatus)
+    fastify.put("/", controller.updateWorker)
 }
