@@ -10,6 +10,7 @@ create table regions.achievements_base (
     hour time NOT NULL,
     action_id integer NOT NULL,
     activity_id integer NOT NULL,
+    management_unit_id integer NOT NULL,
     state_id integer NOT NULL,
     municipality_id integer NOT NULL,
     parish_id integer NOT NULL,
@@ -69,7 +70,6 @@ create table regions.users (
     role_id integer NOT NULL,
     is_active boolean NOT NULL DEFAULT true,
     created date DEFAULT CURRENT_DATE,
-    updated date,
     primary key(id)
 );
 
@@ -81,6 +81,7 @@ CREATE TABLE regions.type_action(
 
 CREATE TABLE regions.type_activity(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
+    type_action_id integer NOT NULL,
     type_activity varchar(100) NOT NULL UNIQUE,
     primary key(id)
 );
@@ -88,6 +89,12 @@ CREATE TABLE regions.type_activity(
 CREATE TABLE regions.status(
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     status varchar(100) NOT NULL UNIQUE,
+    primary key(id)
+);
+
+CREATE TABLE regions.management_unit(
+    id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
+    management_unit varchar(100) NOT NULL UNIQUE,
     primary key(id)
 );
 
@@ -185,3 +192,6 @@ ALTER TABLE regions.achievements_g_violence ADD CONSTRAINT fk_achievements_g_vio
 ALTER TABLE regions.users ADD CONSTRAINT fk_users_worker_id FOREIGN KEY (worker_id) references general.workers(id);
 
 ALTER TABLE regions.users ADD CONSTRAINT fk_users_role_id FOREIGN KEY (role_id) references regions.roles(id);
+
+-- type_action
+ALTER TABLE regions.type_action ADD CONSTRAINT fk_type_action_type_activity_id FOREIGN KEY (type_activity_id) references regions.type_activity(id);
