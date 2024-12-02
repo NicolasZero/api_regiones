@@ -19,3 +19,29 @@ lEFT JOIN general.area_coordination AS a ON a.id = w.area_coordination_id;
 CREATE OR REPLACE VIEW regions.view_users AS SELECT u.*, r.role, w.identity_card, w.full_name, w.status, w.gender, w.position, w.position_id, w.gender_id, w.department, w.department_id FROM regions.users AS u
 LEFT JOIN regions.roles AS r ON r.id = u.role_id
 LEFT JOIN general.view_workers AS w ON w.id = u.worker_id;
+
+CREATE OR REPLACE VIEW regions.view_achievements AS select 
+	b.*,
+	o.place_id,
+	o.place_other,
+	o.n_womans,
+	o.n_man,
+	o.n_unspecified,
+	o.responsible,
+	o.phone_number,
+	g.age_range_id,
+	g.type_weapon_id,
+	g.type_femicide_id,
+	g.killer_status_id,
+	t.type_telephone_service_id,
+	t.great_mission,
+	v.country_id,
+	v.gender_id,
+	v.age,
+	v.collection_method,
+	v.received
+from regions.achievements_base as b 
+left join regions.achievements_others as o on o.achievements_id = b.id
+left join regions.achievements_g_violence as g on g.achievements_id = b.id
+left join regions.achievements_telephone_service as t on t.achievements_id = b.id
+left join regions.achievements_victim_traff as v on v.achievements_id = b.id;
