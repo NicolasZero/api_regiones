@@ -5,11 +5,11 @@ Orden/Order
 -table-
 1° - schema.public
 2° - schema.general
-3° - schema.attendance_control
+3° - schema.regions
 4° - views
 -data-
 5° - insert.public
 6° - insert.general
-7° - insert.attendance_control
--test-
+7° - insert.regions
+-test-(if exist)
 n° - insert.data.test
