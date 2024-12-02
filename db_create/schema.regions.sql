@@ -172,7 +172,7 @@ ALTER TABLE regions.achievements_victim_traff ADD CONSTRAINT fk_achievements_vic
 
 ALTER TABLE regions.achievements_victim_traff ADD CONSTRAINT fk_achievements_victim_traff_country_id FOREIGN KEY (country_id) references public.countries(id);
 
-ALTER TABLE regions.achievements_victim_traff ADD CONSTRAINT fk_achievements_victim_traff_gender_id FOREIGN KEY (gender_id) references public.gender(id);
+ALTER TABLE regions.achievements_victim_traff ADD CONSTRAINT fk_achievements_victim_traff_gender_id FOREIGN KEY (gender_id) references public.genders(id);
 
 -- achievements_telephone_service
 ALTER TABLE regions.achievements_telephone_service ADD CONSTRAINT fk_achievements_telephone_service_base_id FOREIGN KEY (achievements_id) references regions.achievements_base(id);
@@ -193,5 +193,5 @@ ALTER TABLE regions.users ADD CONSTRAINT fk_users_worker_id FOREIGN KEY (worker_
 
 ALTER TABLE regions.users ADD CONSTRAINT fk_users_role_id FOREIGN KEY (role_id) references regions.roles(id);
 
--- type_action
-ALTER TABLE regions.type_action ADD CONSTRAINT fk_type_action_type_activity_id FOREIGN KEY (type_activity_id) references regions.type_activity(id);
+-- type_activity
+ALTER TABLE regions.type_activity ADD CONSTRAINT fk_type_activity_type_action_id FOREIGN KEY (type_action_id) references regions.type_action(id);
