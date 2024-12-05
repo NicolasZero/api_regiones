@@ -21,20 +21,20 @@ create table regions.achievements_base (
 
 create table regions.achievements_others (
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    achievements_id integer NOT NULL,
+    achievements_id integer NOT NULL UNIQUE,
     place_id integer NOT NULL,
     place_other varchar,
     n_womans integer NOT NULL DEFAULT 0,
     n_man integer NOT NULL DEFAULT 0,
     n_unspecified integer,
-    responsible integer NOT NULL,
+    responsible varchar NOT NULL,
     phone_number varchar(100),
     primary key(id)
 );
 
 create table regions.achievements_victim_traff (
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    achievements_id integer NOT NULL,
+    achievements_id integer NOT NULL UNIQUE,
     country_id integer NOT NULL,
     gender_id integer NOT NULL,
     age integer NOT NULL,
@@ -45,7 +45,7 @@ create table regions.achievements_victim_traff (
 
 create table regions.achievements_telephone_service (
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    achievements_id integer NOT NULL,
+    achievements_id integer NOT NULL UNIQUE,
     type_telephone_service_id integer NOT NULL,
     great_mission varchar NOT NULL,
     primary key(id)
