@@ -53,7 +53,7 @@ create table regions.achievements_telephone_service (
 
 create table regions.achievements_g_violence (
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
-    achievements_id integer NOT NULL,
+    achievements_id integer NOT NULL UNIQUE,
     age_range_id integer NOT NULL,
     type_weapon_id integer NOT NULL,
     type_femicide_id integer NOT NULL,
