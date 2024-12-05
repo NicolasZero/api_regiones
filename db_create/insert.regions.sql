@@ -20,7 +20,7 @@ INSERT INTO regions.type_activity OVERRIDING SYSTEM VALUE VALUES
 (3, 1, 'Mesa Técnica de Justica de Géner'),
 (4, 1, 'Representación en Causas Judiciales'),
 (5, 1, 'Víctima de trata'),
-(6, 1, 'Violencia de Genero ¿Cómo hacen los reportes, general o individual?'),
+(6, 1, 'Violencia de Genero'),
 (7, 1, 'Actuación Procesal'),
 (8, 2, 'Atención Psicológica'),
 (9, 2, 'Atención Ginecológica'),
