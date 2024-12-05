@@ -61,13 +61,64 @@ const insertArchievement = async (request, reply) => {
         let resp = await query(textQuery,value)
         const id = resp.rows[0].id
 
-        if (activity_id == 5) {
+        if (activity_id == 5){
+            const {
+                country_id,
+                gender_id,
+                age,
+                collection_method,
+                received
+            } = request.body
+
+            textQuery = `INSERT INTO regions.achievements_victim_traff (
+                achievements_id,
+                country_id,
+                gender_id,
+                age,
+                collection_method,
+                received
+                ) VALUES ($1, $2, $3, $4, $5, $6);`
+            value = [id, country_id, gender_id, age, collection_method, received]
+            resp = await query(textQuery,value)
+        } else if (activity_id == 6) {
+            const {
+                age_range_id,
+                type_weapon_id,
+                type_femicide_id,
+                killer_status_id
+            } = request.body
+
+            textQuery = `INSERT INTO regions.achievements_g_violence (
+                achievements_id,
+                age_range_id,
+                type_weapon_id,
+                type_femicide_id,
+                killer_status_id
+                ) VALUES ($1, $2, $3, $4, $5);`
+            value = [id, age_range_id, type_weapon_id, type_femicide_id, killer_status_id]
+            resp = await query(textQuery,value)
+        } else if (activity_id == 16) {
+            const {
+                type_telephone_service_id,
+                great_mission
+            } = request.body
+
+            textQuery = `INSERT INTO regions.achievements_g_violence (
+                achievements_id,
+                type_telephone_service_id,
+                great_mission
+                ) VALUES ($1, $2, $3, $4, $5);`
+            value = [id, type_telephone_service_id, great_mission]
+            resp = await query(textQuery,value)
+        } else {
             const {
                 place_id,
                 place_other,
                 n_womans,
                 n_man,
-                n_unspecified
+                n_unspecified,
+                responsible,
+                phone_number
             } = request.body
 
             textQuery = `INSERT INTO regions.achievements_others (
@@ -76,9 +127,11 @@ const insertArchievement = async (request, reply) => {
                 place_other,
                 n_womans,
                 n_man,
-                n_unspecified
-                ) VALUES ($1, $2, $3, $4, $5, $6);`
-            value = [id, place_id, place_other, n_womans, n_man, n_unspecified]
+                n_unspecified,
+                responsible,
+                phone_number
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`
+            value = [id, place_id, place_other, n_womans, n_man, n_unspecified, responsible, phone_number]
             resp = await query(textQuery,value)
         }
 
