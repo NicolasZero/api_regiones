@@ -1,0 +1,17 @@
+{
+    "created_by":1,
+    "date":"1900/01/01",
+    "hour":"00:00",
+    "action_id":1,
+    "activity_id":6,
+    "management_unit_id":1,
+    "state_id":1,
+    "municipality_id":1,
+    "parish_id":1,
+    "observation":"observation",
+    "previously_scheduled":false,
+    "age_range_id":"",
+    "type_weapon_id":"",
+    "type_femicide_id":"",
+    "killer_status_id":""
+}

@@ -1,0 +1,18 @@
+{
+    "created_by":1,
+    "date":"1900/01/01",
+    "hour":"00:00",
+    "action_id":1,
+    "activity_id":5,
+    "management_unit_id":1,
+    "state_id":1,
+    "municipality_id":1,
+    "parish_id":1,
+    "observation":"observation",
+    "previously_scheduled":false,
+    "country_id":1,
+    "gender_id":1,
+    "age":27,
+    "collection_method":"texto",
+    "received":"texto"
+}

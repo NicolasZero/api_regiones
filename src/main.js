@@ -9,7 +9,7 @@ fastify.get('/', async (request, reply) => {
 })
 
 // Nombre de las rutas
-const routeName = ['archievement', 'user', 'worker']
+const routeName = ['archievement', 'user', 'worker','location']
 
 routeName.forEach((route) => {
     fastify.register(require(`./routes/route.${route}.js`), { prefix: `${route}` })
