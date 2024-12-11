@@ -3,6 +3,11 @@ const fastify = require('fastify')(
 )
 require('dotenv').config()
 
+const cors = require('@fastify/cors')
+
+fastify.register(cors, {
+  origin: ['localhost']
+})
 
 fastify.get('/', async (request, reply) => {
     return { hello: 'world' }
