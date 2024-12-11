@@ -181,9 +181,9 @@ const updareArchievement = async (request, reply) => {
         WHERE achievements_id = $3;`
         resp = await query(textQuery, [n_womans, n_man, id])
 
-        if (resp.rowCount == 0) {
-            await query("UPDATE regions.achievements_base SET date = '1900-01-01', observation = '', status_id = 2 WHERE id = $1;", [id])
-        }
+        // if (resp.rowCount == 0) {
+        //     await query("UPDATE regions.achievements_base SET date = '1900-01-01', observation = '', status_id = 2 WHERE id = $1;", [id])
+        // }
 
         return reply.send({ status: "ok", msg: `Se actualizaron ${resp.rowCount}`, data: resp.rowCount });
     } catch (error) {
