@@ -21,8 +21,22 @@ LEFT JOIN regions.roles AS r ON r.id = u.role_id
 LEFT JOIN general.view_workers AS w ON w.id = u.worker_id;
 
 CREATE OR REPLACE VIEW regions.view_achievements AS select 
-	b.*,
-	o.place_id,
+	b.id,
+	b.status_id,
+    b.created_on,
+	b.created_by as user_id,
+    u.username,
+    b.date,
+    b.hour,
+    ta1.type_action,
+	ta2.type_activity,
+    mu.management_unit,
+    s.state,
+    m.municipality,
+    p.parish,
+    b.observation,
+    b.previously_scheduled,
+	pl.place,
 	o.place_other,
 	o.n_womans,
 	o.n_man,
@@ -41,7 +55,17 @@ CREATE OR REPLACE VIEW regions.view_achievements AS select
 	v.collection_method,
 	v.received
 from regions.achievements_base as b 
+-- joins --
 left join regions.achievements_others as o on o.achievements_id = b.id
 left join regions.achievements_g_violence as g on g.achievements_id = b.id
 left join regions.achievements_telephone_service as t on t.achievements_id = b.id
-left join regions.achievements_victim_traff as v on v.achievements_id = b.id;
+left join regions.achievements_victim_traff as v on v.achievements_id = b.id
+left join regions.users as u on u.id = b.created_by
+-- id - to - string --
+inner join regions.type_action as ta1 on ta1.id = b.action_id
+inner join regions.type_activity as ta2 on ta2.id = b.activity_id
+inner join regions.management_unit as mu on mu.id = b.management_unit_id
+inner join regions.place as pl on pl.id = o.place_id
+inner join states as s on s.id = b.state_id
+inner join municipalities as m on m.id = b.municipality_id
+inner join parishes as p on p.id = b.parish_id;

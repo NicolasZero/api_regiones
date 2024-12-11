@@ -106,10 +106,12 @@ SELECT pg_catalog.setval('regions.age_range_id_seq', 5, true);
 
 INSERT INTO regions.management_unit OVERRIDING SYSTEM VALUE VALUES
 (0, 'NINGUNO'),
-(1, 'gerencia 1'),
-(2, 'gerencia 2');
+(1, 'Gerencia de la defensoría nacional de los derechos de la mujer'),
+(2, 'Gerencia de desarrollo alternativo y política regional'),
+(3, 'Gerencia de atención integral y prevención de la violencia contra las mujeres'),
+(4, 'Gerencia de investigación y capacitación');
 
-SELECT pg_catalog.setval('regions.management_unit_id_seq', 3, true);
+SELECT pg_catalog.setval('regions.management_unit_id_seq', 5, true);
 
 INSERT INTO regions.type_telephone_service OVERRIDING SYSTEM VALUE VALUES
 (0, 'NINGUNO'),
