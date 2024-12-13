@@ -202,7 +202,6 @@ create table regions.social_day_achievements (
     created_by integer NOT NULL,
     created_on date DEFAULT CURRENT_DATE,
     status_id integer NOT NULL DEFAULT 2,
-    previously_scheduled boolean NOT NULL DEFAULT false,
     date date NOT NULL,
     hour time NOT NULL,
     num_mobile_units integer NOT NULL,
