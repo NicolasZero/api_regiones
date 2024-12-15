@@ -104,11 +104,11 @@ const insertArchievement = async (request, reply) => {
                 great_mission
             } = request.body
 
-            textQuery = `INSERT INTO regions.achievements_g_violence (
+            textQuery = `INSERT INTO regions.achievements_telephone_service (
                 achievements_id,
                 type_telephone_service_id,
                 great_mission
-                ) VALUES ($1, $2, $3, $4, $5);`
+                ) VALUES ($1, $2, $3);`
             value = [id, type_telephone_service_id, great_mission]
             resp = await query(textQuery, value)
             console.log(resp)
