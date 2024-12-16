@@ -248,26 +248,26 @@ create table regions.social_day_ethnicity (
 );
 
 create table regions.service_subtypes (
-    integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
+    id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     service_type_id integer NOT NULL,
     subtype varchar NOT NULL,
     primary key(id)
 );
 
 create table regions.service_types (
-    integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
+    id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     service_type varchar NOT NULL,
     primary key(id)
 );
 
 create table regions.disabilitys (
-    integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
+    id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     disability varchar NOT NULL,
     primary key(id)
 );
 
 create table regions.ethnicities (
-    integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
+    id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     ethnicity varchar NOT NULL,
     primary key(id)
 );

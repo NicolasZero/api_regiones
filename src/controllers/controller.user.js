@@ -54,7 +54,7 @@ const changeUserStatus = async (request, reply) => {
         const {id,is_active} = request.body
 
         // Request body verification
-        if (id !== "number" || typeof is_active !== "boolean") {
+        if (typeof id !== "number" || typeof is_active !== "boolean") {
             return reply.code(400).send({ error: "body not valid", status: "failed" })
         }
         
@@ -64,6 +64,14 @@ const changeUserStatus = async (request, reply) => {
     } catch (error) {
         console.log(error) ;
         return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const createUser = async (request, reply) => {
+    try {
+        
+    } catch (error) {
+        
     }
 }
 
