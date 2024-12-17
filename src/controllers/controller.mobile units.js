@@ -1,6 +1,6 @@
 const { query } = require("../db/postgresql");
 
-const getAllArchievement = async (request, reply) => {
+const getAllMobileUnits = async (request, reply) => {
     try {
         const textQuery = `SELECT * FROM regions.view_achievements;`
         const resp = await query(textQuery)
@@ -11,7 +11,7 @@ const getAllArchievement = async (request, reply) => {
     }
 }
 
-const getArchievementById = async (request, reply) => {
+const getMobileUnitsById = async (request, reply) => {
     try {
         const id = request.params.id
         const textQuery = `SELECT * FROM regions.view_achievements WHERE id = $1;`

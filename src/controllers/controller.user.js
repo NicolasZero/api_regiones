@@ -1,4 +1,5 @@
 const { query } = require("../db/postgresql");
+const { encrypt, compare } = require("../helpers/helperEncrypt.js");
 
 const getAllUser = async (request, reply) => {
     try {
@@ -60,7 +61,13 @@ const changeUserStatus = async (request, reply) => {
         
         const textQuery = `UPDATE regions.users SET is_active = $1 WHERE id = $2;`
         const resp = await query(textQuery,[is_active,id])
-        return reply.send({status: "ok", msg:`Se encontro ${resp.rowCount} resultado`, data: resp.rows[0]});
+        
+        // Comprueba si se actualizo con exito
+        if (resp.rowCount == 0) {
+            return reply.code(409).send({ error: "error en la petición", status: "failed" });
+        }
+
+        return reply.send({ status: "ok", msg: `Se actualizo con exito` });
     } catch (error) {
         console.log(error) ;
         return reply.code(500).send({ error: "error en la peticion", status: "failed" });
@@ -69,7 +76,28 @@ const changeUserStatus = async (request, reply) => {
 
 const createUser = async (request, reply) => {
     try {
-        
+        if (!request.body) {
+            return reply.code(400).send({ error: "body not valid", status: "failed" });
+        }
+        const {worker_id,username,password,role_id} = request.body
+
+        // Request body verification
+        if (typeof worker_id !== "number" || typeof username !== "string" || typeof password !== "string") {
+            return reply.code(400).send({ error: "body not valid", status: "failed" })
+        }
+
+        // Encrita la contraseña
+        const pass = encrypt(password)
+
+        const textQuery = `INSERT INTO regions.users (worker_id,username,password,role_id) VALUES ($1, $2, $3, $4),`
+        const resp = await query(textQuery,[worker_id,username,pass,role_id])
+
+        // Comprueba si se creo con exito
+        if (resp.rowCount == 0) {
+            return reply.code(409).send({ error: "error en la petición", status: "failed" });
+        }
+
+        return reply.send({ status: "ok", msg: `Se registro con exito` });
     } catch (error) {
         
     }
@@ -79,5 +107,6 @@ module.exports = {
     getAllUser,
     getUserById,
     updatetUser,
-    changeUserStatus
+    changeUserStatus,
+    createUser
 }

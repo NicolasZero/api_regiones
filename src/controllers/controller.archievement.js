@@ -138,7 +138,7 @@ const insertArchievement = async (request, reply) => {
             // console.log(resp)
         }
 
-        console.log(resp);
+        // console.log(resp);
 
         if (resp.rowCount == 0) {
             return reply.code(500).send({ error: "error en la peticion", status: "failed" });

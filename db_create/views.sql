@@ -62,10 +62,11 @@ left join regions.achievements_telephone_service as t on t.achievements_id = b.i
 left join regions.achievements_victim_traff as v on v.achievements_id = b.id
 left join regions.users as u on u.id = b.created_by
 -- id - to - string --
-inner join regions.type_action as ta1 on ta1.id = b.action_id
-inner join regions.type_activity as ta2 on ta2.id = b.activity_id
-inner join regions.management_unit as mu on mu.id = b.management_unit_id
-inner join regions.place as pl on pl.id = o.place_id
-inner join states as s on s.id = b.state_id
-inner join municipalities as m on m.id = b.municipality_id
-inner join parishes as p on p.id = b.parish_id;
+left join regions.type_action as ta1 on ta1.id = b.action_id
+left join regions.type_activity as ta2 on ta2.id = b.activity_id
+left join regions.management_unit as mu on mu.id = b.management_unit_id
+left join regions.place as pl on pl.id = o.place_id
+left join states as s on s.id = b.state_id
+left join municipalities as m on m.id = b.municipality_id
+left join parishes as p on p.id = b.parish_id;
+
