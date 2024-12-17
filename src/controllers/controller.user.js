@@ -77,29 +77,44 @@ const changeUserStatus = async (request, reply) => {
 const createUser = async (request, reply) => {
     try {
         if (!request.body) {
-            return reply.code(400).send({ error: "body not valid", status: "failed" });
+            return reply.code(400).send({ error: "body not valid, datos incompletos", status: "failed" });
         }
-        const {worker_id,username,password,role_id} = request.body
+        const { worker_id, username, password, role_id } = request.body;
 
         // Request body verification
-        if (typeof worker_id !== "number" || typeof username !== "string" || typeof password !== "string") {
-            return reply.code(400).send({ error: "body not valid", status: "failed" })
+        if (typeof worker_id !== "number" || typeof username !== "string" || typeof password !== "string" || typeof role_id !== "number") {
+            return reply.code(400).send({ error: "body not valid, error en tipo de dato", status: "failed" });
         }
 
-        // Encrita la contraseña
-        const pass = encrypt(password)
+        // Check if worker_id already has a user
+        let textQuery = `SELECT * FROM regions.users WHERE worker_id = $1`;
+        let resp = await query(textQuery, [worker_id]);
+        if (resp.rowCount > 0) {
+            return reply.code(409).send({ error: "Ese trabajador ya posee un usuario", status: "failed" });
+        }
 
-        const textQuery = `INSERT INTO regions.users (worker_id,username,password,role_id) VALUES ($1, $2, $3, $4),`
-        const resp = await query(textQuery,[worker_id,username,pass,role_id])
+        // Check if username already exists
+        textQuery = `SELECT * FROM regions.users WHERE username = $1`;
+        resp = await query(textQuery, [username]);
+        if (resp.rowCount > 0) {
+            return reply.code(409).send({ error: "El nombre de usuario ya esta en uso", status: "failed" });
+        }
 
-        // Comprueba si se creo con exito
+        // Encrypt the password
+        const pass = encrypt(password);
+
+        // Insert the new user
+        textQuery = `INSERT INTO regions.users (worker_id, username, password, role_id) VALUES ($1, $2, $3, $4)`;
+        resp = await query(textQuery, [worker_id, username, pass, role_id]);
+
+        // Check if the user was created successfully
         if (resp.rowCount == 0) {
             return reply.code(409).send({ error: "error en la petición", status: "failed" });
         }
 
         return reply.send({ status: "ok", msg: `Se registro con exito` });
     } catch (error) {
-        
+        return reply.code(500).send({ error: "internal server error", status: "failed" });
     }
 }
 
