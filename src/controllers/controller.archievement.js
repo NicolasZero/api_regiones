@@ -2,7 +2,7 @@ const { query } = require("../db/postgresql");
 
 const getAllArchievement = async (request, reply) => {
     try {
-        const textQuery = `SELECT * FROM regions.view_achievements;`
+        const textQuery = `SELECT * FROM regions.view_achievements where previously_scheduled = false;`
         const resp = await query(textQuery)
         return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows });
     } catch (error) {
@@ -155,49 +155,8 @@ const insertArchievement = async (request, reply) => {
     }
 }
 
-const updareArchievement = async (request, reply) => {
-    if (!request.body) {
-        return reply.code(400).send({ error: "body empty not valid", status: "failed" });
-    }
-    const { id } = request.body
-    let base = false
-    try {
-        const { date, n_womans, n_man, observation } = request.body
-
-        // sql
-        let textQuery = `UPDATE regions.achievements_base
-        SET date = $1, observation = $2, status_id = 1
-        WHERE id = $3;`
-        // Ejecuta el sql
-        let resp = await query(textQuery, [date, observation, id])        
-
-        // en caso de no encontrar el id, base es true
-        if (resp.rowCount == 0) {
-            base = true
-        }
-
-        textQuery = `UPDATE regions.achievements_others
-        SET n_womans = $1, n_man = $2
-        WHERE achievements_id = $3;`
-        resp = await query(textQuery, [n_womans, n_man, id])
-
-        // if (resp.rowCount == 0) {
-        //     await query("UPDATE regions.achievements_base SET date = '1900-01-01', observation = '', status_id = 2 WHERE id = $1;", [id])
-        // }
-
-        return reply.send({ status: "ok", msg: `Se actualizaron ${resp.rowCount}`, data: resp.rowCount });
-    } catch (error) {
-        if (base) {
-            await query("UPDATE regions.achievements_base SET date = '1900-01-01', observation = '', status_id = 2 WHERE id = $1;", [id])
-        }
-        console.log(error);
-        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
-    }
-}
-
 module.exports = {
     getAllArchievement,
     getArchievementById,
-    insertArchievement,
-    updareArchievement
+    insertArchievement
 }
