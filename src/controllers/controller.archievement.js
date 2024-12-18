@@ -11,6 +11,17 @@ const getAllArchievement = async (request, reply) => {
     }
 }
 
+const getAllArchievementByUser = async (request, reply) => {
+    try {
+        const textQuery = `SELECT * FROM regions.view_achievements where status_id = 1 AND created_by = $1;`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
 const getArchievementById = async (request, reply) => {
     try {
         const id = request.params.id
@@ -160,5 +171,6 @@ const insertArchievement = async (request, reply) => {
 module.exports = {
     getAllArchievement,
     getArchievementById,
-    insertArchievement
+    insertArchievement,
+    getAllArchievementByUser
 }

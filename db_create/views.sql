@@ -23,6 +23,7 @@ LEFT JOIN general.view_workers AS w ON w.id = u.worker_id;
 CREATE OR REPLACE VIEW regions.view_achievements AS select 
 	b.id,
 	b.status_id,
+	st.status,
     b.created_on,
 	b.created_by as user_id,
     u.username,
@@ -61,6 +62,7 @@ left join regions.achievements_g_violence as g on g.achievements_id = b.id
 left join regions.achievements_telephone_service as t on t.achievements_id = b.id
 left join regions.achievements_victim_traff as v on v.achievements_id = b.id
 left join regions.users as u on u.id = b.created_by
+left join regions.status as st on b.status_id = st.id
 -- id - to - string --
 left join regions.type_action as ta1 on ta1.id = b.action_id
 left join regions.type_activity as ta2 on ta2.id = b.activity_id
@@ -69,4 +71,3 @@ left join regions.place as pl on pl.id = o.place_id
 left join states as s on s.id = b.state_id
 left join municipalities as m on m.id = b.municipality_id
 left join parishes as p on p.id = b.parish_id;
-

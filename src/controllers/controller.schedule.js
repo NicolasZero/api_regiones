@@ -11,6 +11,18 @@ const getAllScheduled = async (request, reply) => {
     }
 }
 
+const getAllScheduledbyUser = async (request, reply) => {
+    try {
+        const id = request.params.id
+        const textQuery = `SELECT * FROM regions.view_achievements where previously_scheduled = true AND created_by = $1;`
+        const resp = await query(textQuery,[id])
+        return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
 const getScheduledById = async (request, reply) => {
     try {
         const id = request.params.id
@@ -30,14 +42,14 @@ const updateScheduled = async (request, reply) => {
     const { id } = request.body
     let base = false
     try {
-        const { date, n_womans, n_man, observation } = request.body
+        const {n_womans, n_man, observation,status_id } = request.body
 
         // sql
         let textQuery = `UPDATE regions.achievements_base
-        SET date = $1, observation = $2, status_id = 1
+        SET observation = $1, status_id = $2
         WHERE id = $3;`
         // Ejecuta el sql
-        let resp = await query(textQuery, [date, observation, id])        
+        let resp = await query(textQuery, [observation,status_id,id])        
 
         // en caso de no encontrar el id, base es true
         if (resp.rowCount == 0) {
@@ -62,5 +74,6 @@ const updateScheduled = async (request, reply) => {
 module.exports = {
     getAllScheduled,
     getScheduledById,
-    updateScheduled
+    updateScheduled,
+    getAllScheduledbyUser
 }
