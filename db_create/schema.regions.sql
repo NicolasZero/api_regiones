@@ -16,6 +16,7 @@ create table regions.achievements_base (
     parish_id integer NOT NULL,
     observation text,
     previously_scheduled boolean NOT NULL DEFAULT false,
+    observation_schedule text,
     primary key(id)
 );
 
