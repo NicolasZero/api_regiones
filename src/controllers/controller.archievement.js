@@ -41,6 +41,7 @@ const insertArchievement = async (request, reply) => {
             parish_id,
             observation,
             previously_scheduled,
+            status_id
         } = request.body
 
         let textQuery = `INSERT INTO regions.achievements_base (
@@ -55,8 +56,9 @@ const insertArchievement = async (request, reply) => {
                         parish_id,
                         observation,
                         previously_scheduled
-                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id;`
-        let value = [created_by, date, hour, action_id, activity_id, management_unit_id, state_id, municipality_id, parish_id, observation, previously_scheduled]
+                        status_id
+                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id;`
+        let value = [created_by, date, hour, action_id, activity_id, management_unit_id, state_id, municipality_id, parish_id, observation, previously_scheduled, status_id]
         let resp = await query(textQuery, value)
         id = resp.rows[0].id
 
