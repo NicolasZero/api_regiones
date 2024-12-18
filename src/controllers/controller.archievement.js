@@ -2,7 +2,7 @@ const { query } = require("../db/postgresql");
 
 const getAllArchievement = async (request, reply) => {
     try {
-        const textQuery = `SELECT * FROM regions.view_achievements where previously_scheduled = false;`
+        const textQuery = `SELECT * FROM regions.view_achievements where status_id = 1;`
         const resp = await query(textQuery)
         return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows });
     } catch (error) {
