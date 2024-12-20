@@ -125,8 +125,8 @@ INSERT INTO regions.service_types OVERRIDING SYSTEM VALUE VALUES
 (0, 'NINGUNO'),
 (1, 'MEDICINA GENERAL'),
 (2, 'CONTROL PRENATAL'),
-(3, 'PSICOLOGIA');
-(4, 'ECOGRAFIAS');
+(3, 'PSICOLOGIA'),
+(4, 'ECOGRAFIAS'),
 (5, 'Si, esta opcion existe, pero no se cual es :v');
 
 SELECT pg_catalog.setval('regions.service_types_id_seq', 6, true);
