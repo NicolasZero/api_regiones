@@ -203,10 +203,11 @@ create table regions.social_day_achievements (
     created_by integer NOT NULL,
     created_on date DEFAULT CURRENT_DATE,
     status_id integer NOT NULL DEFAULT 2,
-    date date NOT NULL,
-    hour time NOT NULL,
+    date date NOT NULL DEFAULT CURRENT_DATE,
+    hour time NOT NULL DEFAULT CURRENT_TIME,
     num_mobile_units integer NOT NULL,
     num_ultrasounds integer NOT NULL,
+    logistical_support varchar NOT NULL,
     responsible varchar NOT NULL,
     state_id integer NOT NULL,
     municipality_id integer NOT NULL,
@@ -222,6 +223,7 @@ create table regions.social_day_service_types (
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     social_day_id integer NOT NULL,
     service_type_id integer NOT NULL,
+    service_subtype_id integer DEFAULT 0,
     age_range_id integer NOT NULL,
     n_mans integer NOT NULL DEFAULT 0,
     n_womans integer NOT NULL DEFAULT 0,
@@ -231,6 +233,7 @@ create table regions.social_day_service_types (
 create table regions.social_day_disability (
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     social_day_id integer NOT NULL,
+    service_type_id integer NOT NULL,
     disability_id integer NOT NULL,
     age_range_id integer NOT NULL,
     n_mans integer NOT NULL DEFAULT 0,
@@ -241,6 +244,7 @@ create table regions.social_day_disability (
 create table regions.social_day_ethnicity (
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     social_day_id integer NOT NULL,
+    service_type_id integer NOT NULL,
     ethnicity_id integer NOT NULL,
     age_range_id integer NOT NULL,
     n_mans integer NOT NULL DEFAULT 0,
@@ -289,6 +293,8 @@ ALTER TABLE regions.social_day_service_types ADD CONSTRAINT fk_social_day_servic
 
 ALTER TABLE regions.social_day_service_types ADD CONSTRAINT fk_social_day_service_types_service_type_id FOREIGN KEY (service_type_id) references regions.service_types(id);
 
+ALTER TABLE regions.social_day_service_types ADD CONSTRAINT fk_social_day_service_types_service_subtype_id FOREIGN KEY (service_subtype_id) references regions.service_subtypes(id);
+
 ALTER TABLE regions.social_day_service_types ADD CONSTRAINT fk_social_day_service_types_age_range_id FOREIGN KEY (age_range_id) references regions.age_range(id);
 
 -- social_day_disability
@@ -298,12 +304,16 @@ ALTER TABLE regions.social_day_disability ADD CONSTRAINT fk_social_day_disabilit
 
 ALTER TABLE regions.social_day_disability ADD CONSTRAINT fk_social_day_disability_age_range_id FOREIGN KEY (age_range_id) references regions.age_range(id);
 
+ALTER TABLE regions.social_day_disability ADD CONSTRAINT fk_social_day_disability_service_type_id FOREIGN KEY (service_type_id) references regions.service_types(id);
+
 -- social_day_ethnicity
 ALTER TABLE regions.social_day_ethnicity ADD CONSTRAINT fk_social_day_ethnicity_social_day_id FOREIGN KEY (social_day_id) references regions.social_day_achievements(id);
 
 ALTER TABLE regions.social_day_ethnicity ADD CONSTRAINT fk_social_day_ethnicity_ethnicity_id FOREIGN KEY (ethnicity_id) references regions.ethnicities(id);
 
 ALTER TABLE regions.social_day_ethnicity ADD CONSTRAINT fk_social_day_ethnicity_age_range_id FOREIGN KEY (age_range_id) references regions.age_range(id);
+
+ALTER TABLE regions.social_day_ethnicity ADD CONSTRAINT fk_social_day_ethnicity_service_type_id FOREIGN KEY (service_type_id) references regions.service_types(id);
 
 -- service_subtypes
 ALTER TABLE regions.service_subtypes ADD CONSTRAINT fk_service_subtypes_service_type_id FOREIGN KEY (service_type_id) references regions.service_types(id);

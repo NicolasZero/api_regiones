@@ -101,7 +101,6 @@ INSERT INTO regions.age_range OVERRIDING SYSTEM VALUE VALUES
 (3, '31-45'),
 (4, '46-85');
 
-
 SELECT pg_catalog.setval('regions.age_range_id_seq', 5, true);
 
 INSERT INTO regions.management_unit OVERRIDING SYSTEM VALUE VALUES
@@ -120,3 +119,30 @@ INSERT INTO regions.type_telephone_service OVERRIDING SYSTEM VALUE VALUES
 (3, 'Orientación');
 
 SELECT pg_catalog.setval('regions.type_telephone_service_id_seq', 4, true);
+
+-- ---------- unite mobile ---------- --
+INSERT INTO regions.service_types OVERRIDING SYSTEM VALUE VALUES
+(0, 'NINGUNO'),
+(1, 'MEDICINA GENERAL'),
+(2, 'CONTROL PRENATAL'),
+(3, 'PSICOLOGIA');
+(4, 'ECOGRAFIAS');
+(5, 'Si, esta opcion existe, pero no se cual es :v');
+
+SELECT pg_catalog.setval('regions.service_types_id_seq', 6, true);
+
+INSERT INTO regions.service_subtypes OVERRIDING SYSTEM VALUE VALUES
+(0, 0, 'NINGUNO'),
+(1, 4, 'ABDOMINAL'),
+(2, 4, 'TRANSVAGINAL'),
+(3, 4, 'PARTES BLANDAS'),
+(4, 4, 'RENAL'),
+(5, 4, 'TIROIDE'),
+(6, 4, 'OBSTETRICO'),
+(7, 4, 'PERFIL BIOFISICO'),
+(8, 4, 'MAMARIO'),
+(9, 4, 'PELVICO'),
+(10, 4, 'MORFOGENETICO'),
+(11, 5, 'Tampoco se cual sera esta opcion');
+
+SELECT pg_catalog.setval('regions.service_subtypes_id_seq', 12, true);

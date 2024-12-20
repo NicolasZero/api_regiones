@@ -1,23 +1,34 @@
-const fastify = require('fastify')( 
- { logger: false}
-)
+const fs = require('fs')
+const fastify = require('fastify')({logger: false})
+const cors = require('@fastify/cors')
+
 require('dotenv').config()
 
-const cors = require('@fastify/cors')
 
 fastify.register(cors, {
   origin: '*'
 })
 
-fastify.get('/', async (request, reply) => {
-    return { hello: 'world' }
+// Obtiene la dirección de la carpeta de rutas
+const pathRouter = `${__dirname}\\routes`
+
+// Genera automaticamente los prefijos para las rutas
+
+fs.readdirSync(pathRouter).filter((file)=>{
+    const route = file.substring(0, file.length - 3)
+    fastify.register(require(`./routes/${route}.js`), { prefix: route })    
+    // console.log('--->',route)
 })
 
 // Nombre de las rutas
-const routeName = ['archievement','user','worker','location','auth','schedule']
+// const routeName = ['archievement','user','worker','location','auth','schedule']
 
-routeName.forEach((route) => {
-    fastify.register(require(`./routes/route.${route}.js`), { prefix: `${route}` })
+// routeName.forEach((route) => {
+//   fastify.register(require(`./routes/route.${route}.js`), { prefix: `${route}` })
+// })
+
+fastify.get('/', async (request, reply) => {
+    return { hello: 'world' }
 })
 
 const start = async () => {
