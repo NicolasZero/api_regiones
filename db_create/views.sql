@@ -74,6 +74,7 @@ LEFT JOIN parishes as p on p.id = b.parish_id;
 --mobile_unite
 CREATE OR REPLACE VIEW regions.mobile_units AS SELECT 
     a.id,
+    a.status_id,
     st.status,
     a.created_by as user_id,
  	u.username,

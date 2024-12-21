@@ -4,6 +4,15 @@ GET {{url}}/mobile_units
 
 ###
 
+GET {{url}}/mobile_units/achieved
+
+###
+
+GET {{url}}/mobile_units/scheduled
+
+
+###
+
 POST {{url}}/mobile_units
 Content-Type: application/json
 
