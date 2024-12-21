@@ -57,17 +57,45 @@ CREATE OR REPLACE VIEW regions.view_achievements AS select
 	v.received
 from regions.achievements_base as b 
 -- joins --
-left join regions.achievements_others as o on o.achievements_id = b.id
-left join regions.achievements_g_violence as g on g.achievements_id = b.id
-left join regions.achievements_telephone_service as t on t.achievements_id = b.id
-left join regions.achievements_victim_traff as v on v.achievements_id = b.id
-left join regions.users as u on u.id = b.created_by
-left join regions.status as st on b.status_id = st.id
--- id - to - string --
-left join regions.type_action as ta1 on ta1.id = b.action_id
-left join regions.type_activity as ta2 on ta2.id = b.activity_id
-left join regions.management_unit as mu on mu.id = b.management_unit_id
-left join regions.place as pl on pl.id = o.place_id
-left join states as s on s.id = b.state_id
-left join municipalities as m on m.id = b.municipality_id
-left join parishes as p on p.id = b.parish_id;
+LEFT JOIN regions.achievements_others as o on o.achievements_id = b.id
+LEFT JOIN regions.achievements_g_violence as g on g.achievements_id = b.id
+LEFT JOIN regions.achievements_telephone_service as t on t.achievements_id = b.id
+LEFT JOIN regions.achievements_victim_traff as v on v.achievements_id = b.id
+LEFT JOIN regions.users as u on u.id = b.created_by
+LEFT JOIN regions.status as st on b.status_id = st.id
+LEFT JOIN regions.type_action as ta1 on ta1.id = b.action_id
+LEFT JOIN regions.type_activity as ta2 on ta2.id = b.activity_id
+LEFT JOIN regions.management_unit as mu on mu.id = b.management_unit_id
+LEFT JOIN regions.place as pl on pl.id = o.place_id
+LEFT JOIN states as s on s.id = b.state_id
+LEFT JOIN municipalities as m on m.id = b.municipality_id
+LEFT JOIN parishes as p on p.id = b.parish_id;
+
+--mobile_unite
+CREATE OR REPLACE VIEW regions.mobile_units AS SELECT 
+    a.id,
+    st.status,
+    a.created_by as user_id,
+ 	u.username,
+	TO_CHAR(a.created_on, 'dd/mm/yyyy') as created_on,
+	TO_CHAR(a.date, 'dd/mm/yyyy') as date,
+    a.num_mobile_units,
+    a.num_ultrasounds,
+    a.responsible,
+    a.state_id,
+    s.state,
+    a.municipality_id,
+    m.municipality,
+    a.parish_id,
+    p.parish,
+    a.place,
+    a.approximate,
+    a.observation1,
+    a.observation2,
+    a.logistical_support
+FROM regions.social_day_achievements a
+LEFT JOIN regions.users u ON u.id = a.created_by
+LEFT JOIN regions.status st ON a.status_id = st.id
+LEFT JOIN states s ON s.id = a.state_id
+LEFT JOIN municipalities m ON m.id = a.municipality_id
+LEFT JOIN parishes p ON p.id = a.parish_id;
