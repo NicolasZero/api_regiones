@@ -14,7 +14,7 @@ const getAllScheduled = async (request, reply) => {
 const getAllScheduledbyUser = async (request, reply) => {
     try {
         const id = request.params.id
-        const textQuery = `SELECT * FROM regions.view_achievements where previously_scheduled = true AND created_by = $1;`
+        const textQuery = `SELECT * FROM regions.view_achievements where previously_scheduled = true AND user_id = $1;`
         const resp = await query(textQuery,[id])
         return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows });
     } catch (error) {
