@@ -12,7 +12,7 @@ module.exports = async function (fastify) {
   // Por id del registro 
   fastify.get("/id/:id", controller.getMobileUnitsById);
   // Todos de un usuario especifico
-  fastify.get("/user/:id", controller.getMobileUnitsByUser);
+  fastify.get("/user/:id", controller.getMobileUnitsByUser(''));
   // Todos de un usuario especifico
   fastify.get("/achieved/user/:id", controller.getMobileUnitsByUser('AND status_id = 1'));
   // Todos de un usuario especifico

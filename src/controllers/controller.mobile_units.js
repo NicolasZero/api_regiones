@@ -14,9 +14,9 @@ const getAllMobileUnits = (filter) => async (request, reply) => {
 const getMobileUnitsByUser = (filter) => async (request, reply) => {
     try {
         const id = request.params.id
-        const textQuery = `SELECT * FROM regions.mobile_units WHERE created_by = $1 ${filter};`
+        const textQuery = `SELECT * FROM regions.mobile_units WHERE user_id = $1 ${filter};`
         const resp = await query(textQuery, [id])
-        return reply.send({ status: "ok", msg: `Se encontro ${resp.rowCount} resultado`, data: resp.rows[0] });
+        return reply.send({ status: "ok", msg: `Se encontro ${resp.rowCount} resultado`, data: resp.rows });
     } catch (error) {
         console.log(error);
         return reply.code(500).send({ error: "error en la peticion", status: "failed" });
