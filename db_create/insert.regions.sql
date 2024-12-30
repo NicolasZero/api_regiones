@@ -146,3 +146,19 @@ INSERT INTO regions.service_subtypes OVERRIDING SYSTEM VALUE VALUES
 (11, 5, 'Tampoco se cual sera esta opcion');
 
 SELECT pg_catalog.setval('regions.service_subtypes_id_seq', 12, true);
+
+INSERT INTO regions.disabilitys OVERRIDING SYSTEM VALUE VALUES
+(0, 'NINGUNO'),
+(1, 'Discapacidad 1'),
+(2, 'Discapacidad 2'),
+(3, 'Discapacidad 3');
+
+SELECT pg_catalog.setval('regions.disabilitys_id_seq', 4, true);
+
+INSERT INTO regions.ethnicities OVERRIDING SYSTEM VALUE VALUES
+(0, 'NINGUNO'),
+(1, 'Etnia 1'),
+(2, 'Etnia 2'),
+(3, 'Etnia 3');
+
+SELECT pg_catalog.setval('regions.ethnicities_id_seq', 4, true);

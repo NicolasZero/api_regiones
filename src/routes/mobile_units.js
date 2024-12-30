@@ -19,6 +19,8 @@ module.exports = async function (fastify) {
   fastify.get("/scheduled/user/:id", controller.getMobileUnitsByUser('AND status_id = 2'));
   // Todos de un usuario especifico
   fastify.get("/unachieved/user/:id", controller.getMobileUnitsByUser('AND status_id = 3'));
+  // Insertar unidad movil
   fastify.post("/", controller.insertMobileUnits);
+  // Insertar especificaciones de unidad movil
   fastify.post("/details", controller.insertMobileUnitsDetails);
 }

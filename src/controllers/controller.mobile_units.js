@@ -79,21 +79,53 @@ const insertMobileUnitsDetails = async (request, reply) =>{
             return reply.code(400).send({ error: "body empty not valid", status: "failed" });
         }
         const {
+            id,
             obs2,
             attentionTypes
         } = request.body
 
-        const textQuery = `
-            INSERT INTO regions.social_day_achievements(
-                
-            ) VALUES (
+        // insertar consulta para verificar que existe una unidad movil con ese id aqui :v
+
+        const numAttention = attentionTypes.length
+
+        let text = ""
+        let text2 = ""
+
+        let a = 0
+        attentionTypes.forEach(attention => {
+            return attention.ageRanges.forEach(e => {
+                text += `${id},${attention.type},${attention.subType?attention.subType:0},${e.range},${e.men},${e.women},`
+                text2 += `($${a+1},$${a+2},$${a+3},$${a+4},$${a+5},$${a+6}),`
+                a += 6
+            })
+        })
+
+        text = text.slice(0, -1)
+
+        const values = text.split(",")
+
+        // for (let i = 1; i <= values.length; i++) {
+        //     text += `$${i},`;
+        // }
+
+        text = text2.slice(0, -1)
+        
+        const textQuery = `INSERT INTO regions.social_day_service_types(social_day_id,service_type_id,service_subtype_id,age_range_id,n_mans,n_womans) VALUES ${text};`
             
-            );`
-        const value = []
-        const resp = await query(textQuery, value)
+        // return {textQuery,values}
+        // Insertar tipo de servicio
+        const resp = await query(textQuery, values)
+
+        if (resp.rowCount == 0) {
+            return reply.code(500).send({ error: "No se logro registrar", status: "failed" });
+        }
+
+        return reply.send({ status: "ok", msg: `Se registro con exito` });
+
 
     } catch (error) {
-        
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
     }
 }
 
