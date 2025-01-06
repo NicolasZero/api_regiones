@@ -84,44 +84,93 @@ const insertMobileUnitsDetails = async (request, reply) =>{
             attentionTypes
         } = request.body
 
-        // insertar consulta para verificar que existe una unidad movil con ese id aqui :v
+        // Verifica que el id exista
+        const verification = query(`SELECT * FROM regions.social_day_achievements WHERE id = $1;`,[id])
 
-        const numAttention = attentionTypes.length
+        if (verification.rowCount == 0) {
+            return reply.code(500).send({ error: "No se logro registrar", status: "failed" });
+        }
 
-        let text = ""
-        let text2 = ""
+        // Agregar verificacion de que no exista otros detalles de unidades moviles, aquí :v
 
-        let a = 0
+        // Tipo de atencion
+        let textType = `${id},`
+        let textTypeValue = ""
+
+        // Discapacidad
+        let textDisability = `${id},`
+        let textDisabilityValue = ""
+
+        // Etnia
+        let textEthnicity = `${id},`
+        let textEthnicityValue = ""
+
+        // Variables para los foreach
+        let a = 1 // Tipo
+        let b = 1 // Discapacidad
+        let c = 1 // Etnia
+
         attentionTypes.forEach(attention => {
-            return attention.ageRanges.forEach(e => {
-                text += `${id},${attention.type},${attention.subType?attention.subType:0},${e.range},${e.men},${e.women},`
-                text2 += `($${a+1},$${a+2},$${a+3},$${a+4},$${a+5},$${a+6}),`
-                a += 6
+            attention.ageRanges.forEach(e => {
+                textType += `${attention.type},${attention.subType?attention.subType:0},${e.range},${e.men},${e.women},`
+                textTypeValue += `($1,$${a+1},$${a+2},$${a+3},$${a+4},$${a+5}),`
+                a += 5
+            })
+
+            attention.disabilities.forEach(disability => {
+                disability.ageRanges.forEach(e => {
+                    textDisability += `${attention.type},${disability.type},${e.range},${e.men},${e.women},`
+                    textDisabilityValue += `($1,$${b+1},$${b+2},$${b+3},$${b+4},$${b+5}),`
+                    b += 5
+                })
+            })
+
+            attention.ethnicities.forEach(ethnicity => {
+                ethnicity.ageRanges.forEach(e => {
+                    textEthnicity += `${attention.type},${ethnicity.type},${e.range},${e.men},${e.women},`
+                    textEthnicityValue += `($1,$${c+1},$${c+2},$${c+3},$${c+4},$${c+5}),`
+                    c += 5
+                })
             })
         })
 
-        text = text.slice(0, -1)
+        // ===== Tipo de servicio ===== //
+        let values = textType.slice(0, -1).split(",") // Transformar en array y eliminar la ultima coma
+        let textInsert = textTypeValue.slice(0, -1) // Eliminar la ultima coma
+        let textQuery = `INSERT INTO regions.social_day_service_types(social_day_id,service_type_id,service_subtype_id,age_range_id,n_mans,n_womans) VALUES ${textInsert};`
 
-        const values = text.split(",")
-
-        // for (let i = 1; i <= values.length; i++) {
-        //     text += `$${i},`;
-        // }
-
-        text = text2.slice(0, -1)
-        
-        const textQuery = `INSERT INTO regions.social_day_service_types(social_day_id,service_type_id,service_subtype_id,age_range_id,n_mans,n_womans) VALUES ${text};`
-            
-        // return {textQuery,values}
-        // Insertar tipo de servicio
-        const resp = await query(textQuery, values)
+        let resp = await query(textQuery, values)
 
         if (resp.rowCount == 0) {
             return reply.code(500).send({ error: "No se logro registrar", status: "failed" });
         }
 
-        return reply.send({ status: "ok", msg: `Se registro con exito` });
+        // ===== Discapacidad ===== //
+        values = textDisability.slice(0, -1).split(",")
+        textInsert = textDisabilityValue.slice(0, -1)
+        textQuery = `INSERT INTO regions.social_day_disability (social_day_id,service_type_id,disability_id,age_range_id,n_mans,n_womans) VALUES ${textInsert};`
 
+        resp = await query(textQuery, values)
+
+        if (resp.rowCount == 0) {
+            query(`DELETE FROM regions.social_day_service_types WHERE id = $1;`,[id])
+            return reply.code(500).send({ error: "No se logro registrar", status: "failed" });
+        }
+
+        // ===== Etnia ===== //
+        values = textEthnicity.slice(0, -1).split(",")
+        textInsert = textEthnicityValue.slice(0, -1)
+        textQuery = `INSERT INTO regions.social_day_ethnicity (social_day_id,service_type_id,ethnicity_id,age_range_id,n_mans,n_womans) VALUES ${textInsert};`
+
+        resp = await query(textQuery, values)
+
+        if (resp.rowCount == 0) {
+            query(`DELETE FROM regions.social_day_service_types WHERE id = $1;`,[id])
+            query(`DELETE FROM regions.social_day_disability WHERE id = $1;`,[id])
+            return reply.code(500).send({ error: "No se logro registrar", status: "failed" });
+        }
+
+        return reply.send({ status: "ok", msg: `Se registro con exito` });
 
     } catch (error) {
         console.log(error);

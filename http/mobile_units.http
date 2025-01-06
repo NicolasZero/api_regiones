@@ -104,14 +104,24 @@ Content-Type: application/json
                     "type": 1,
                     "ageRanges": [
                         {
-                            "range": 1,
-                            "women": 5,
-                            "men": 1
-                        },
-                        {
                             "range": 2,
                             "women": 5,
-                            "men": 1
+                            "men": 10
+                        },
+                        {
+                            "range": 3,
+                            "women": 5,
+                            "men": 10
+                        }
+                    ]
+                },
+                {
+                    "type": 2,
+                    "ageRanges": [
+                        {
+                            "range": 3,
+                            "women": 5,
+                            "men": 10
                         }
                     ]
                 }
@@ -124,11 +134,6 @@ Content-Type: application/json
                             "range": 1,
                             "women": 10,
                             "men": 5
-                        },
-                        {
-                            "range": 2,
-                            "women": 10,
-                            "men": 7
                         }
                     ]
                 }
