@@ -151,17 +151,17 @@ INSERT INTO regions.disabilitys OVERRIDING SYSTEM VALUE VALUES
 (0, 'NINGUNO'),
 (1, 'FÍSICA'),
 (2, 'VISUAL'),
-(3, 'AUDITIVA');
-(4, 'INTELECTUAL');
+(3, 'AUDITIVA'),
+(4, 'INTELECTUAL'),
 (5, 'PSICOSOCIAL');
 
-SELECT pg_catalog.setval('regions.disabilitys_id_seq', 4, true);
+SELECT pg_catalog.setval('regions.disabilitys_id_seq', 6, true);
 
 INSERT INTO regions.ethnicities OVERRIDING SYSTEM VALUE VALUES
 (0, 'NINGUNO'),
 (1, 'INDÍGENA'),
 (2, 'AFRODESCENDIENTE'),
-(3, 'MESTIZO');
+(3, 'MESTIZO'),
 (4, 'BLANCO');
 
-SELECT pg_catalog.setval('regions.ethnicities_id_seq', 4, true);
+SELECT pg_catalog.setval('regions.ethnicities_id_seq', 5, true);
