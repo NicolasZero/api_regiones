@@ -10,6 +10,9 @@ GET {{url}}/mobile_units/achieved
 
 GET {{url}}/mobile_units/scheduled
 
+###
+
+GET {{url}}/mobile_units/details/1
 
 ###
 

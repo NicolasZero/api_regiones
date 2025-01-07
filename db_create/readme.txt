@@ -6,7 +6,7 @@ Orden/Order
 1° - schema.public
 2° - schema.general
 3° - schema.regions
-4° - views
+4° - views or individual views (view."name".sql)
 -data-
 5° - insert.public
 6° - insert.general

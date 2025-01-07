@@ -26,14 +26,35 @@ const getMobileUnitsByUser = (filter) => async (request, reply) => {
 const getMobileUnitsById = async (request, reply) => {
     try {
         const id = request.params.id
-        const textQuery = `SELECT * FROM regions.mobile_units WHERE id = $1;`
-        const resp = await query(textQuery, [id])
+        const resp = await query(`SELECT * FROM regions.mobile_units WHERE id = $1;`, [id])
         return reply.send({ status: "ok", msg: `Se encontro ${resp.rowCount} resultado`, data: resp.rows[0] });
     } catch (error) {
         console.log(error);
         return reply.code(500).send({ error: "error en la peticion", status: "failed" });
     }
 }
+
+const getMobileUnitsDetailsById = async (request, reply) => {
+    try {
+        const id = request.params.id
+        
+        let data = {}
+        let resp = await query(`SELECT id, service_type, subtype, disability, age_range FROM regions.mobile_units_disability WHERE social_day_id = $1;`, [id])
+        data.disability = resp.rows
+
+        resp = await query(`SELECT id, service_type, subtype, ethnicity, age_range FROM regions.mobile_units_ethnicity WHERE social_day_id = $1;`, [id])
+        data.ethnicity = resp.rows
+
+        resp = await query(`SELECT id, service_type, subtype, age_range FROM regions.mobile_units_service WHERE social_day_id = $1;`, [id])
+        data.service = resp.rows
+
+        return reply.send({ status: "ok", msg: `Busqueda exitosa`, data });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
 
 const insertMobileUnits= async (request, reply) => {
     try {
@@ -84,15 +105,33 @@ const insertMobileUnitsDetails = async (request, reply) =>{
             attentionTypes
         } = request.body
 
-        // Verifica que el id exista
-        const verification = query(`SELECT * FROM regions.social_day_achievements WHERE id = $1;`,[id])
+        // Verifica que el id de la unidad movil exista
+        let verification = await query(`SELECT * FROM regions.social_day_achievements WHERE id = $1;`,[id])
 
         if (verification.rowCount == 0) {
             return reply.code(500).send({ error: "No se logro registrar", status: "failed" });
         }
 
-        // Agregar verificacion de que no exista otros detalles de unidades moviles, aquí :v
+        // === Verifica que no exista otro detalle de unidad movil === //
+        // discapacidad
+        verification = await query(`SELECT * FROM regions.social_day_disability WHERE social_day_id = $1;`,[id])
+        if (verification.rowCount != 0) {
+            return reply.code(500).send({ error: "Ya existe un registro", status: "failed" });
+        }
 
+        // Servicios
+        verification = await query(`SELECT * FROM regions.social_day_service_types WHERE social_day_id = $1;`,[id])
+        if (verification.rowCount != 0) {
+            return reply.code(500).send({ error: "Ya existe un registro", status: "failed" });
+        }
+
+        // Etnia
+        verification = await query(`SELECT * FROM regions.social_day_ethnicity WHERE social_day_id = $1;`,[id])
+        if (verification.rowCount != 0) {
+            return reply.code(500).send({ error: "Ya existe un registro", status: "failed" });
+        }
+
+        // Variables para los foreach
         // Tipo de atencion
         let textType = `${id},`
         let textTypeValue = ""
@@ -105,7 +144,7 @@ const insertMobileUnitsDetails = async (request, reply) =>{
         let textEthnicity = `${id},`
         let textEthnicityValue = ""
 
-        // Variables para los foreach
+        // contadores para los foreach
         let a = 1 // Tipo
         let b = 1 // Discapacidad
         let c = 1 // Etnia
@@ -119,17 +158,17 @@ const insertMobileUnitsDetails = async (request, reply) =>{
 
             attention.disabilities.forEach(disability => {
                 disability.ageRanges.forEach(e => {
-                    textDisability += `${attention.type},${disability.type},${e.range},${e.men},${e.women},`
-                    textDisabilityValue += `($1,$${b+1},$${b+2},$${b+3},$${b+4},$${b+5}),`
-                    b += 5
+                    textDisability += `${attention.type},${attention.subType?attention.subType:0},${disability.type},${e.range},${e.men},${e.women},`
+                    textDisabilityValue += `($1,$${b+1},$${b+2},$${b+3},$${b+4},$${b+5},$${b+6}),`
+                    b += 6
                 })
             })
 
             attention.ethnicities.forEach(ethnicity => {
                 ethnicity.ageRanges.forEach(e => {
-                    textEthnicity += `${attention.type},${ethnicity.type},${e.range},${e.men},${e.women},`
-                    textEthnicityValue += `($1,$${c+1},$${c+2},$${c+3},$${c+4},$${c+5}),`
-                    c += 5
+                    textEthnicity += `${attention.type},${attention.subType?attention.subType:0},${ethnicity.type},${e.range},${e.men},${e.women},`
+                    textEthnicityValue += `($1,$${c+1},$${c+2},$${c+3},$${c+4},$${c+5},$${c+6}),`
+                    c += 6
                 })
             })
         })
@@ -148,32 +187,39 @@ const insertMobileUnitsDetails = async (request, reply) =>{
         // ===== Discapacidad ===== //
         values = textDisability.slice(0, -1).split(",")
         textInsert = textDisabilityValue.slice(0, -1)
-        textQuery = `INSERT INTO regions.social_day_disability (social_day_id,service_type_id,disability_id,age_range_id,n_mans,n_womans) VALUES ${textInsert};`
+        textQuery = `INSERT INTO regions.social_day_disability (social_day_id,service_type_id,service_subtype_id,disability_id,age_range_id,n_mans,n_womans) VALUES ${textInsert};`
 
         resp = await query(textQuery, values)
 
         if (resp.rowCount == 0) {
-            query(`DELETE FROM regions.social_day_service_types WHERE id = $1;`,[id])
+            query(`DELETE FROM regions.social_day_service_types WHERE social_day_id = $1;`,[id])
             return reply.code(500).send({ error: "No se logro registrar", status: "failed" });
         }
 
         // ===== Etnia ===== //
         values = textEthnicity.slice(0, -1).split(",")
         textInsert = textEthnicityValue.slice(0, -1)
-        textQuery = `INSERT INTO regions.social_day_ethnicity (social_day_id,service_type_id,ethnicity_id,age_range_id,n_mans,n_womans) VALUES ${textInsert};`
+        textQuery = `INSERT INTO regions.social_day_ethnicity (social_day_id,service_type_id,service_subtype_id,ethnicity_id,age_range_id,n_mans,n_womans) VALUES ${textInsert};`
 
         resp = await query(textQuery, values)
 
         if (resp.rowCount == 0) {
-            query(`DELETE FROM regions.social_day_service_types WHERE id = $1;`,[id])
-            query(`DELETE FROM regions.social_day_disability WHERE id = $1;`,[id])
+            await query(`DELETE FROM regions.social_day_service_types WHERE social_day_id = $1;`,[id])
+            await query(`DELETE FROM regions.social_day_disability WHERE social_day_id = $1;`,[id])
             return reply.code(500).send({ error: "No se logro registrar", status: "failed" });
         }
+
+        await query(`UPDATE regions.social_day_achievements SET observation2 = $1, status_id = 1 WHERE id = $2;`,[obs2, id])
 
         return reply.send({ status: "ok", msg: `Se registro con exito` });
 
     } catch (error) {
-        console.log(error);
+        // Elimina si falla
+        const {id} = request.body
+        await query(`DELETE FROM regions.social_day_service_types WHERE social_day_id = $1;`,[id])
+        await query(`DELETE FROM regions.social_day_disability WHERE social_day_id = $1;`,[id])
+        await query(`DELETE FROM regions.social_day_ethnicity WHERE social_day_id = $1;`,[id])
+        console.log(error, id);
         return reply.code(500).send({ error: "error en la peticion", status: "failed" });
     }
 }
@@ -183,5 +229,6 @@ module.exports = {
     getMobileUnitsById,
     insertMobileUnits,
     insertMobileUnitsDetails,
-    getMobileUnitsByUser
+    getMobileUnitsByUser,
+    getMobileUnitsDetailsById
 }

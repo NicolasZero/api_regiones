@@ -234,6 +234,7 @@ create table regions.social_day_disability (
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     social_day_id integer NOT NULL,
     service_type_id integer NOT NULL,
+    service_subtype_id integer DEFAULT 0,
     disability_id integer NOT NULL,
     age_range_id integer NOT NULL,
     n_mans integer NOT NULL DEFAULT 0,
@@ -245,6 +246,7 @@ create table regions.social_day_ethnicity (
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     social_day_id integer NOT NULL,
     service_type_id integer NOT NULL,
+    service_subtype_id integer DEFAULT 0,
     ethnicity_id integer NOT NULL,
     age_range_id integer NOT NULL,
     n_mans integer NOT NULL DEFAULT 0,
@@ -276,6 +278,10 @@ create table regions.ethnicities (
     ethnicity varchar NOT NULL,
     primary key(id)
 );
+
+
+-- -- for development it is not necessary to create the indexes -- -- -- --
+
 
 -- social_day_achievements
 ALTER TABLE regions.social_day_achievements ADD CONSTRAINT fk_social_day_created_by FOREIGN KEY (created_by) references regions.users(id);
