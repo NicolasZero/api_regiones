@@ -102,7 +102,8 @@ const insertMobileUnitsDetails = async (request, reply) =>{
         const {
             id,
             obs2,
-            attentionTypes
+            attentionTypes,
+            status
         } = request.body
 
         // Verifica que el id de la unidad movil exista
@@ -209,7 +210,14 @@ const insertMobileUnitsDetails = async (request, reply) =>{
             return reply.code(500).send({ error: "No se logro registrar", status: "failed" });
         }
 
-        await query(`UPDATE regions.social_day_achievements SET observation2 = $1, status_id = 1 WHERE id = $2;`,[obs2, id])
+        let changestatus = 2
+        if (status == "Completado") {
+            changestatus = 1
+        }else{ 
+            changestatus = 3
+        }
+
+        await query(`UPDATE regions.social_day_achievements SET observation2 = $1, status_id = ${changestatus} WHERE id = $2;`,[obs2, id])
 
         return reply.send({ status: "ok", msg: `Se registro con exito` });
 
