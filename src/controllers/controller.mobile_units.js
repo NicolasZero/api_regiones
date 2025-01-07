@@ -211,7 +211,7 @@ const insertMobileUnitsDetails = async (request, reply) =>{
         }
 
         let changestatus = 2
-        if (status == "Completado") {
+        if (status == "Completada") {
             changestatus = 1
         }else{ 
             changestatus = 3
