@@ -1,6 +1,6 @@
 const { query } = require("../db/postgresql");
 
-const getAllMobileUnits = (filter) => async (request, reply) => {
+const getAll = (filter) => async (request, reply) => {
     try {
         const textQuery = `SELECT * FROM regions.mobile_units ${filter};`
         const resp = await query(textQuery)
@@ -11,7 +11,33 @@ const getAllMobileUnits = (filter) => async (request, reply) => {
     }
 }
 
-const getMobileUnitsByUser = (filter) => async (request, reply) => {
+const countAll = (filter) => async (request, reply) => {
+    try {
+        const textQuery = `SELECT count(*) FROM regions.mobile_units ${filter};`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", data: resp.rows[0] });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const countAllForMonth = (filter) => async (request, reply) => {
+    try {
+        const { month, year } = request.params
+        if (!Number(year) || !Number(month)) {
+            return reply.code(400).send({ error: "year or month not valid", status: "failed" });
+        }
+        const textQuery = `SELECT count(*) FROM regions.mobile_units ${filter};`
+        const resp = await query(textQuery,[month, year])
+        return reply.send({ status: "ok", data: resp.rows[0] });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const getByUser = (filter) => async (request, reply) => {
     try {
         const id = request.params.id
         const textQuery = `SELECT * FROM regions.mobile_units WHERE user_id = $1 ${filter};`
@@ -23,7 +49,7 @@ const getMobileUnitsByUser = (filter) => async (request, reply) => {
     }
 }
 
-const getMobileUnitsById = async (request, reply) => {
+const getById = async (request, reply) => {
     try {
         const id = request.params.id
         const resp = await query(`SELECT * FROM regions.mobile_units WHERE id = $1;`, [id])
@@ -34,7 +60,7 @@ const getMobileUnitsById = async (request, reply) => {
     }
 }
 
-const getMobileUnitsDetailsById = async (request, reply) => {
+const getDetailsById = async (request, reply) => {
     try {
         const id = request.params.id
         
@@ -55,8 +81,35 @@ const getMobileUnitsDetailsById = async (request, reply) => {
     }
 }
 
+const getStatisticsAnnual = async (request, reply) => {
+    try {
+        const {year} = request.params
+        if (!Number(year)) {
+            return reply.code(400).send({ error: "year not valid", status: "failed" });
+        }
+        const textQuery = `
+            SELECT m.month , coalesce(s.finished,0) as finished, coalesce(s.unfinished,0) as unfinished 
+            FROM (
+                SELECT 
+                    extract(month FROM created_on) AS month,
+                    COUNT(CASE WHEN status_id = 1 THEN status_id ELSE NULL END) AS finished,
+                    COUNT(CASE WHEN status_id != 1 THEN status_id ELSE NULL END) AS unfinished
+                FROM regions.social_day_achievements
+                WHERE EXTRACT(YEAR FROM created_on) = ${year}
+                group by month
+            ) as s
+            FULL JOIN month as m on m.id = s.month
+            WHERE m.id != 0;`
 
-const insertMobileUnits= async (request, reply) => {
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok",data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const insert = async (request, reply) => {
     try {
         if (!request.body) {
             return reply.code(400).send({ error: "body empty not valid", status: "failed" });
@@ -94,7 +147,7 @@ const insertMobileUnits= async (request, reply) => {
     }
 }
 
-const insertMobileUnitsDetails = async (request, reply) =>{
+const insertDetails = async (request, reply) =>{
     try {
         if (!request.body) {
             return reply.code(400).send({ error: "body empty not valid", status: "failed" });
@@ -233,10 +286,13 @@ const insertMobileUnitsDetails = async (request, reply) =>{
 }
 
 module.exports = {
-    getAllMobileUnits,
-    getMobileUnitsById,
-    insertMobileUnits,
-    insertMobileUnitsDetails,
-    getMobileUnitsByUser,
-    getMobileUnitsDetailsById
+    getAll,
+    getById,
+    insert,
+    insertDetails,
+    getByUser,
+    getDetailsById,
+    getStatisticsAnnual,
+    countAll,
+    countAllForMonth
 }

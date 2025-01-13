@@ -1,10 +1,73 @@
 const { query } = require("../db/postgresql");
 
-const getAllScheduled = async (request, reply) => {
+const getAllPreviously = async (request, reply) => {
     try {
         const textQuery = `SELECT * FROM regions.view_achievements where previously_scheduled = true;`
         const resp = await query(textQuery)
         return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const getAllScheduled = async (request, reply) => {
+    try {
+        const textQuery = `SELECT * FROM regions.view_achievements where status_id = 2;`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const countAllPreviously = async (request, reply) => {
+    try {
+        const textQuery = `SELECT count(*) FROM regions.view_achievements where previously_scheduled = true;`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const countAll = async (request, reply) => {
+    try {
+        const textQuery = `SELECT count(*) FROM regions.view_achievements where status_id = 2;`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", data: resp.rows[0] });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const countAllForMonth = async (request, reply) => {
+    try {
+        const { month, year } = request.params
+        if (!Number(year) || !Number(month)) {
+            return reply.code(400).send({ error: "year or month not valid", status: "failed" });
+        }
+        const textQuery = `SELECT count(*) FROM regions.view_achievements WHERE status_id = 2 AND extract(month FROM created_on) = ${month} AND extract(year FROM created_on) = ${year};`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", data: resp.rows[0] });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const countAllPreviouslyForMonth = (filter) => async (request, reply) => {
+    try {
+        const { month, year } = request.params
+        if (!Number(year) || !Number(month)) {
+            return reply.code(400).send({ error: "year or month not valid", status: "failed" });
+        }
+        const textQuery = `SELECT count(*) FROM regions.view_achievements where previously_scheduled = true AND extract(month FROM created_on) = ${month} AND extract(year FROM created_on) = ${year};`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows[0] });
     } catch (error) {
         console.log(error);
         return reply.code(500).send({ error: "error en la peticion", status: "failed" });
@@ -75,5 +138,10 @@ module.exports = {
     getAllScheduled,
     getScheduledById,
     updateScheduled,
-    getAllScheduledbyUser
+    getAllScheduledbyUser,
+    getAllPreviously,
+    countAllPreviously,
+    countAll,
+    countAllForMonth,
+    countAllPreviouslyForMonth
 }

@@ -30,3 +30,9 @@ CREATE TABLE IF NOT EXISTS countries(
     country varchar NOT NULL,
     primary key(id)
 );
+
+CREATE TABLE IF NOT EXISTS month(
+    id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1 MAXVALUE 12),
+    month varchar NOT NULL,
+    primary key(id)
+);

@@ -1,24 +1,19 @@
 @url = http://localhost:3000
 
 GET {{url}}/mobile_units
-
 ###
-
+GET {{url}}/mobile_units/total
+###
+GET {{url}}/mobile_units/statistics/annual/2024
+###
 GET {{url}}/mobile_units/achieved
-
 ###
-
 GET {{url}}/mobile_units/scheduled
-
 ###
-
 GET {{url}}/mobile_units/details/1
-
 ###
-
 POST {{url}}/mobile_units
 Content-Type: application/json
-
 {
     "id":1,
     "cantMobileUnitsRequired":25,
@@ -33,12 +28,9 @@ Content-Type: application/json
     "obs":"observación",
     "date":"2024-12-28T04:00:00.000Z"
 }
-
 ###
-
 POST {{url}}/mobile_units/details
 Content-Type: application/json
-   
 {
     "id": 1,
     "obs2":"Observaciones de prueba",

@@ -1,0 +1,31 @@
+@url = http://localhost:3000
+
+GET {{url}}/archievement/statistics/annual/2025
+###
+GET {{url}}/archievement/statistics/activity
+###
+GET {{url}}/archievement/statistics/activity/year/2024
+###
+POST {{url}}/archievement
+Content-Type: application/json
+
+{
+    "created_by":1,
+    "date":"1900/01/01",
+    "hour":"00:00",
+    "action_id":1,
+    "activity_id":1,
+    "management_unit_id":1,
+    "state_id":1,
+    "municipality_id":1,
+    "parish_id":1,
+    "observation":"observation",
+    "previously_scheduled":true,
+    "place_id":1,
+    "place_other":"",
+    "n_womans":1,
+    "n_man":1,
+    "n_unspecified":0,
+    "responsible":"responsable",
+    "phone_number":"04127848101"
+}

@@ -1,6 +1,6 @@
 const { query } = require("../db/postgresql");
 
-const getAllArchievement = async (request, reply) => {
+const getAll = async (request, reply) => {
     try {
         const textQuery = `SELECT * FROM regions.view_achievements where status_id = 1;`
         const resp = await query(textQuery)
@@ -11,7 +11,33 @@ const getAllArchievement = async (request, reply) => {
     }
 }
 
-const getAllArchievementByUser = async (request, reply) => {
+const countAll = async (request, reply) => {
+    try {
+        const textQuery = `SELECT count(*) FROM regions.view_achievements where status_id = 1;`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", data: resp.rows[0] });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const countAllForMonth = (filter) => async (request, reply) => {
+    try {
+        const { month, year } = request.params
+        if (!Number(year) || !Number(month)) {
+            return reply.code(400).send({ error: "year or month not valid", status: "failed" });
+        }
+        const textQuery = `SELECT count(*) FROM regions.view_achievements WHERE status_id = 1 AND extract(month FROM created_on) = ${month} AND extract(year FROM created_on) = ${year};`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok",data: resp.rows[0] });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const getAllByUser = async (request, reply) => {
     try {
         const textQuery = `SELECT * FROM regions.view_achievements where status_id = 1 AND created_by = $1;`
         const resp = await query(textQuery)
@@ -22,7 +48,7 @@ const getAllArchievementByUser = async (request, reply) => {
     }
 }
 
-const getArchievementById = async (request, reply) => {
+const getById = async (request, reply) => {
     try {
         const id = request.params.id
         const textQuery = `SELECT * FROM regions.view_achievements WHERE id = $1;`
@@ -34,7 +60,60 @@ const getArchievementById = async (request, reply) => {
     }
 }
 
-const insertArchievement = async (request, reply) => {
+const getStatisticsAnnual = async (request, reply) => {
+    try {
+        const {year} = request.params
+        if (!Number(year)) {
+            return reply.code(400).send({ error: "year not valid", status: "failed" });
+        }
+        const textQuery = `
+            SELECT m.month , coalesce(s.finished,0) as finished, coalesce(s.unfinished,0) as unfinished 
+            FROM (
+                SELECT 
+                    extract(month FROM created_on) AS month,
+                    COUNT(CASE WHEN status_id = 1 THEN status_id ELSE NULL END) AS finished,
+                    COUNT(CASE WHEN status_id != 1 THEN status_id ELSE NULL END) AS unfinished
+                FROM regions.view_achievements
+                WHERE EXTRACT(YEAR FROM created_on) = ${year}
+                group by month
+            ) as s
+            FULL JOIN month as m on m.id = s.month
+            WHERE m.id != 0;`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok",data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const getStatisticsActivity = (specific) => async (request, reply) => {
+    try {
+        let specificYear = ''
+        if (specific) {
+            const {year} = request.params
+            if (!Number(year)) {
+                return reply.code(400).send({ error: "year not valid", status: "failed" });
+            }
+            specificYear = `AND EXTRACT(YEAR FROM created_on) = ${year}`
+        }
+        const textQuery = `
+            SELECT 
+                type_activity as activity,
+	            count(type_activity) as done
+            FROM regions.view_achievements
+            WHERE status_id = 1 ${specificYear}
+            GROUP BY type_activity;`
+
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok",data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const insert = async (request, reply) => {
     let id = 0
     try {
         if (!request.body) {
@@ -170,8 +249,12 @@ const insertArchievement = async (request, reply) => {
 }
 
 module.exports = {
-    getAllArchievement,
-    getArchievementById,
-    insertArchievement,
-    getAllArchievementByUser
+    getAll,
+    getById,
+    insert,
+    getAllByUser,
+    getStatisticsAnnual,
+    getStatisticsActivity,
+    countAll,
+    countAllForMonth
 }
