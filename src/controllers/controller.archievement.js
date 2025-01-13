@@ -60,12 +60,139 @@ const getById = async (request, reply) => {
     }
 }
 
-const getStatisticsAnnual = async (request, reply) => {
+const getTableForYear = (specific) => async (request, reply) => {
     try {
-        const {year} = request.params
-        if (!Number(year)) {
-            return reply.code(400).send({ error: "year not valid", status: "failed" });
+        let specificYear = ''
+        if (specific) {
+            const {year} = request.params
+            if (!Number(year)) {
+                return reply.code(400).send({ error: "year not valid", status: "failed" });
+            }
+            specificYear = `AND EXTRACT(YEAR FROM b.created_on) = ${year}`
         }
+
+        const textQuery = `
+        SELECT
+            a1.type_action,
+            a2.type_activity,
+            COUNT(CASE WHEN extract(month FROM created_on) = 1 THEN 1 ELSE NULL END) AS enero,
+            COUNT(CASE WHEN extract(month FROM created_on) = 2 THEN 1 ELSE NULL END) AS febrero,
+            COUNT(CASE WHEN extract(month FROM created_on) = 3 THEN 1 ELSE NULL END) AS marzo,
+            COUNT(CASE WHEN extract(month FROM created_on) = 4 THEN 1 ELSE NULL END) AS abril,
+            COUNT(CASE WHEN extract(month FROM created_on) = 5 THEN 1 ELSE NULL END) AS mayo,
+            COUNT(CASE WHEN extract(month FROM created_on) = 6 THEN 1 ELSE NULL END) AS junio,
+            COUNT(CASE WHEN extract(month FROM created_on) = 7 THEN 1 ELSE NULL END) AS julio,
+            COUNT(CASE WHEN extract(month FROM created_on) = 8 THEN 1 ELSE NULL END) AS agosto,
+            COUNT(CASE WHEN extract(month FROM created_on) = 9 THEN 1 ELSE NULL END) AS septiembre,
+            COUNT(CASE WHEN extract(month FROM created_on) = 10 THEN 1 ELSE NULL END) AS octubre,
+            COUNT(CASE WHEN extract(month FROM created_on) = 11 THEN 1 ELSE NULL END) AS noviembre,
+            COUNT(CASE WHEN extract(month FROM created_on) = 12 THEN 1 ELSE NULL END) AS diciembre
+        FROM regions.achievements_base as b
+        FULL JOIN regions.type_activity as a2 on a2.id = b.action_id ${specificYear}
+        FULL JOIN regions.type_action as a1 on a1.id = a2.type_action_id
+        WHERE a1.id != 0 AND a2.id != 0 
+        GROUP BY a1.id, a1.type_action, a2.type_activity
+        ORDER BY a1.id;`
+
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const getTableForActivity = (specific) => async (request, reply) => {
+    try {
+        let specificYear = ''
+        if (specific) {
+            const {year} = request.params
+            if (!Number(year)) {
+                return reply.code(400).send({ error: "year not valid", status: "failed" });
+            }
+            specificYear = `AND EXTRACT(YEAR FROM b.created_on) = ${year}`
+        }
+
+        const textQuery = `
+        SELECT
+            a1.type_action,
+            a2.type_activity,
+            COUNT(CASE WHEN status_id = 1 THEN status_id ELSE NULL END) AS finished,
+            COUNT(CASE WHEN status_id != 1 THEN status_id ELSE NULL END) AS unfinished,
+            COUNT(b.*) as total
+        FROM regions.achievements_base as b
+        FULL JOIN regions.type_activity as a2 on a2.id = b.action_id ${specificYear}
+        FULL JOIN regions.type_action as a1 on a1.id = a2.type_action_id
+        WHERE a1.id != 0 AND a2.id != 0 
+        GROUP BY a1.id, a1.type_action, a2.type_activity
+        ORDER BY a1.id;`
+
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+const getTableForState = (specific) => async (request, reply) => {
+    try {
+        let specificYear = ''
+        if (specific) {
+            const {year} = request.params
+            if (!Number(year)) {
+                return reply.code(400).send({ error: "year not valid", status: "failed" });
+            }
+            specificYear = `AND EXTRACT(YEAR FROM b.created_on) = ${year}`
+        }
+
+        const textQuery = `
+            SELECT
+                s.state,
+                COUNT(CASE WHEN b.activity_id = 1 THEN b.activity_id ELSE NULL END) AS "Asesoria Legal",
+                COUNT(CASE WHEN b.activity_id = 2 THEN b.activity_id ELSE NULL END) AS "Defensoria Movil",
+                COUNT(CASE WHEN b.activity_id = 3 THEN b.activity_id ELSE NULL END) AS "Mesa Tecnica de Justica de Gener",
+                COUNT(CASE WHEN b.activity_id = 4 THEN b.activity_id ELSE NULL END) AS "Representacion en Causas Judiciales",
+                COUNT(CASE WHEN b.activity_id = 5 THEN b.activity_id ELSE NULL END) AS "Victima de trata",
+                COUNT(CASE WHEN b.activity_id = 6 THEN b.activity_id ELSE NULL END) AS "Violencia de Genero",
+                COUNT(CASE WHEN b.activity_id = 7 THEN b.activity_id ELSE NULL END) AS "Actuacion Procesal",
+                COUNT(CASE WHEN b.activity_id = 8 THEN b.activity_id ELSE NULL END) AS "Atencion Psicologica",
+                COUNT(CASE WHEN b.activity_id = 9 THEN b.activity_id ELSE NULL END) AS "Atencion Ginecologica",
+                COUNT(CASE WHEN b.activity_id = 10 THEN b.activity_id ELSE NULL END) AS "Casa a Casa",
+                COUNT(CASE WHEN b.activity_id = 11 THEN b.activity_id ELSE NULL END) AS "Conversatorio",
+                COUNT(CASE WHEN b.activity_id = 12 THEN b.activity_id ELSE NULL END) AS "Punto Violeta",
+                COUNT(CASE WHEN b.activity_id = 13 THEN b.activity_id ELSE NULL END) AS "Toma de Espacio",
+                COUNT(CASE WHEN b.activity_id = 14 THEN b.activity_id ELSE NULL END) AS "Dinamicas Preventivas",
+                COUNT(CASE WHEN b.activity_id = 15 THEN b.activity_id ELSE NULL END) AS "Cine Foro",
+                COUNT(CASE WHEN b.activity_id = 16 THEN b.activity_id ELSE NULL END) AS "Atencion Telefonica",
+                COUNT(CASE WHEN b.activity_id = 17 THEN b.activity_id ELSE NULL END) AS "Defensoras Comunales Comunitarias",
+                COUNT(CASE WHEN b.activity_id = 18 THEN b.activity_id ELSE NULL END) AS "Defensoras Comunales Laborales",
+                COUNT(CASE WHEN b.activity_id = 19 THEN b.activity_id ELSE NULL END) AS "Defensoras Comunales Juveniles",
+                COUNT(CASE WHEN b.activity_id = 20 THEN b.activity_id ELSE NULL END) AS "Otros",
+                COUNT(B.*) AS total
+            FROM regions.achievements_base as b
+            RIGHT JOIN states as s on s.id = b.state_id ${specificYear}
+            GROUP BY s.state;`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
+
+const getStatisticsAnnual = (specific) => async (request, reply) => {
+    try {
+        let specificYear = ''
+        if (specific) {
+            const {year} = request.params
+            if (!Number(year)) {
+                return reply.code(400).send({ error: "year not valid", status: "failed" });
+            }
+            specificYear = `WHERE EXTRACT(YEAR FROM created_on) = ${year}`
+        }
+
         const textQuery = `
             SELECT m.month , coalesce(s.finished,0) as finished, coalesce(s.unfinished,0) as unfinished 
             FROM (
@@ -74,7 +201,7 @@ const getStatisticsAnnual = async (request, reply) => {
                     COUNT(CASE WHEN status_id = 1 THEN status_id ELSE NULL END) AS finished,
                     COUNT(CASE WHEN status_id != 1 THEN status_id ELSE NULL END) AS unfinished
                 FROM regions.view_achievements
-                WHERE EXTRACT(YEAR FROM created_on) = ${year}
+                ${specificYear}
                 group by month
             ) as s
             FULL JOIN month as m on m.id = s.month
@@ -256,5 +383,8 @@ module.exports = {
     getStatisticsAnnual,
     getStatisticsActivity,
     countAll,
-    countAllForMonth
+    countAllForMonth,
+    getTableForYear,
+    getTableForActivity,
+    getTableForState
 }
