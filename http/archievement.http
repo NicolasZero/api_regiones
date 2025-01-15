@@ -20,6 +20,7 @@ Content-Type: application/json
     "municipality_id":1,
     "parish_id":1,
     "observation":"observation",
+    "observation_scheduled":"observation_scheduled",
     "previously_scheduled":true,
     "place_id":1,
     "place_other":"",

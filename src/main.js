@@ -10,7 +10,7 @@ fastify.register(cors, {
 })
 
 // Obtiene la dirección de la carpeta de rutas
-const pathRouter = `${__dirname}\\routes`
+const pathRouter = `${__dirname}/routes`
 
 // Genera automaticamente los prefijos para las rutas
 

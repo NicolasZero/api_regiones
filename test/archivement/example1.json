@@ -9,6 +9,7 @@
     "municipality_id":1,
     "parish_id":1,
     "observation":"observation",
+    "observation_schedule":"observation_schedule",
     "previously_scheduled":false,
     "place_id":1,
     "place_other":"",

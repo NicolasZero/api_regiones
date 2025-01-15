@@ -9,7 +9,8 @@ INSERT INTO regions.type_action OVERRIDING SYSTEM VALUE VALUES
 (0, 'NINGUNO'),
 (1, 'Atención Jurídica'),
 (2, 'Prevención'),
-(3, 'Formación');
+(3, 'Formación'),
+(4, 'OAC');
 
 SELECT pg_catalog.setval('regions.type_action_id_seq', 4, true);
 
@@ -108,7 +109,8 @@ INSERT INTO regions.management_unit OVERRIDING SYSTEM VALUE VALUES
 (1, 'Gerencia de la defensoría nacional de los derechos de la mujer'),
 (2, 'Gerencia de desarrollo alternativo y política regional'),
 (3, 'Gerencia de atención integral y prevención de la violencia contra las mujeres'),
-(4, 'Gerencia de investigación y capacitación');
+(4, 'Gerencia de investigación y capacitación'),
+(5, 'Gerencia de oficina de atencion a la ciudadania');
 
 SELECT pg_catalog.setval('regions.management_unit_id_seq', 5, true);
 
