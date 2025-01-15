@@ -91,11 +91,11 @@ const getStatisticsAnnual = async (request, reply) => {
             SELECT m.month , coalesce(s.finished,0) as finished, coalesce(s.unfinished,0) as unfinished 
             FROM (
                 SELECT 
-                    extract(month FROM created_on) AS month,
+                    extract(month FROM date) AS month,
                     COUNT(CASE WHEN status_id = 1 THEN status_id ELSE NULL END) AS finished,
                     COUNT(CASE WHEN status_id != 1 THEN status_id ELSE NULL END) AS unfinished
                 FROM regions.social_day_achievements
-                WHERE EXTRACT(YEAR FROM created_on) = ${year}
+                WHERE EXTRACT(YEAR FROM date) = ${year}
                 group by month
             ) as s
             FULL JOIN month as m on m.id = s.month

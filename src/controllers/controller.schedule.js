@@ -50,7 +50,7 @@ const countAllForMonth = async (request, reply) => {
         if (!Number(year) || !Number(month)) {
             return reply.code(400).send({ error: "year or month not valid", status: "failed" });
         }
-        const textQuery = `SELECT count(*) FROM regions.view_achievements WHERE status_id = 2 AND extract(month FROM created_on) = ${month} AND extract(year FROM created_on) = ${year};`
+        const textQuery = `SELECT count(*) FROM regions.view_achievements WHERE status_id = 2 AND extract(month FROM date) = ${month} AND extract(year FROM date) = ${year};`
         const resp = await query(textQuery)
         return reply.send({ status: "ok", data: resp.rows[0] });
     } catch (error) {
@@ -65,7 +65,7 @@ const countAllPreviouslyForMonth = (filter) => async (request, reply) => {
         if (!Number(year) || !Number(month)) {
             return reply.code(400).send({ error: "year or month not valid", status: "failed" });
         }
-        const textQuery = `SELECT count(*) FROM regions.view_achievements where previously_scheduled = true AND extract(month FROM created_on) = ${month} AND extract(year FROM created_on) = ${year};`
+        const textQuery = `SELECT count(*) FROM regions.view_achievements where previously_scheduled = true AND extract(month FROM date) = ${month} AND extract(year FROM date) = ${year};`
         const resp = await query(textQuery)
         return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows[0] });
     } catch (error) {

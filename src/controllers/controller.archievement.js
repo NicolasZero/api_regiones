@@ -22,13 +22,13 @@ const countAll = async (request, reply) => {
     }
 }
 
-const countAllForMonth = (filter) => async (request, reply) => {
+const countAllForMonth = async (request, reply) => {
     try {
         const { month, year } = request.params
         if (!Number(year) || !Number(month)) {
             return reply.code(400).send({ error: "year or month not valid", status: "failed" });
         }
-        const textQuery = `SELECT count(*) FROM regions.view_achievements WHERE status_id = 1 AND extract(month FROM created_on) = ${month} AND extract(year FROM created_on) = ${year};`
+        const textQuery = `SELECT count(*) FROM regions.view_achievements WHERE status_id = 1 AND extract(month FROM date) = ${month} AND extract(year FROM date) = ${year};`
         const resp = await query(textQuery)
         return reply.send({ status: "ok",data: resp.rows[0] });
     } catch (error) {
@@ -68,25 +68,25 @@ const getTableForYear = (specific) => async (request, reply) => {
             if (!Number(year)) {
                 return reply.code(400).send({ error: "year not valid", status: "failed" });
             }
-            specificYear = `AND EXTRACT(YEAR FROM b.created_on) = ${year}`
+            specificYear = `AND EXTRACT(YEAR FROM b.date) = ${year}`
         }
 
         const textQuery = `
         SELECT
             a1.type_action,
             a2.type_activity,
-            COUNT(CASE WHEN extract(month FROM created_on) = 1 THEN 1 ELSE NULL END) AS enero,
-            COUNT(CASE WHEN extract(month FROM created_on) = 2 THEN 1 ELSE NULL END) AS febrero,
-            COUNT(CASE WHEN extract(month FROM created_on) = 3 THEN 1 ELSE NULL END) AS marzo,
-            COUNT(CASE WHEN extract(month FROM created_on) = 4 THEN 1 ELSE NULL END) AS abril,
-            COUNT(CASE WHEN extract(month FROM created_on) = 5 THEN 1 ELSE NULL END) AS mayo,
-            COUNT(CASE WHEN extract(month FROM created_on) = 6 THEN 1 ELSE NULL END) AS junio,
-            COUNT(CASE WHEN extract(month FROM created_on) = 7 THEN 1 ELSE NULL END) AS julio,
-            COUNT(CASE WHEN extract(month FROM created_on) = 8 THEN 1 ELSE NULL END) AS agosto,
-            COUNT(CASE WHEN extract(month FROM created_on) = 9 THEN 1 ELSE NULL END) AS septiembre,
-            COUNT(CASE WHEN extract(month FROM created_on) = 10 THEN 1 ELSE NULL END) AS octubre,
-            COUNT(CASE WHEN extract(month FROM created_on) = 11 THEN 1 ELSE NULL END) AS noviembre,
-            COUNT(CASE WHEN extract(month FROM created_on) = 12 THEN 1 ELSE NULL END) AS diciembre
+            COUNT(CASE WHEN extract(month FROM date) = 1 THEN 1 ELSE NULL END) AS enero,
+            COUNT(CASE WHEN extract(month FROM date) = 2 THEN 1 ELSE NULL END) AS febrero,
+            COUNT(CASE WHEN extract(month FROM date) = 3 THEN 1 ELSE NULL END) AS marzo,
+            COUNT(CASE WHEN extract(month FROM date) = 4 THEN 1 ELSE NULL END) AS abril,
+            COUNT(CASE WHEN extract(month FROM date) = 5 THEN 1 ELSE NULL END) AS mayo,
+            COUNT(CASE WHEN extract(month FROM date) = 6 THEN 1 ELSE NULL END) AS junio,
+            COUNT(CASE WHEN extract(month FROM date) = 7 THEN 1 ELSE NULL END) AS julio,
+            COUNT(CASE WHEN extract(month FROM date) = 8 THEN 1 ELSE NULL END) AS agosto,
+            COUNT(CASE WHEN extract(month FROM date) = 9 THEN 1 ELSE NULL END) AS septiembre,
+            COUNT(CASE WHEN extract(month FROM date) = 10 THEN 1 ELSE NULL END) AS octubre,
+            COUNT(CASE WHEN extract(month FROM date) = 11 THEN 1 ELSE NULL END) AS noviembre,
+            COUNT(CASE WHEN extract(month FROM date) = 12 THEN 1 ELSE NULL END) AS diciembre
         FROM regions.achievements_base as b
         FULL JOIN regions.type_activity as a2 on a2.id = b.action_id ${specificYear}
         FULL JOIN regions.type_action as a1 on a1.id = a2.type_action_id
@@ -110,7 +110,7 @@ const getTableForActivity = (specific) => async (request, reply) => {
             if (!Number(year)) {
                 return reply.code(400).send({ error: "year not valid", status: "failed" });
             }
-            specificYear = `AND EXTRACT(YEAR FROM b.created_on) = ${year}`
+            specificYear = `AND EXTRACT(YEAR FROM b.date) = ${year}`
         }
 
         const textQuery = `
@@ -143,7 +143,7 @@ const getTableForState = (specific) => async (request, reply) => {
             if (!Number(year)) {
                 return reply.code(400).send({ error: "year not valid", status: "failed" });
             }
-            specificYear = `AND EXTRACT(YEAR FROM b.created_on) = ${year}`
+            specificYear = `AND EXTRACT(YEAR FROM b.date) = ${year}`
         }
 
         const textQuery = `
@@ -181,6 +181,42 @@ const getTableForState = (specific) => async (request, reply) => {
     }
 }
 
+const getTableForGender = (specific) => async (request, reply) => {
+    try {
+        let specificYear = ''
+        if (specific) {
+            const {year} = request.params
+            if (!Number(year)) {
+                return reply.code(400).send({ error: "year not valid", status: "failed" });
+            }
+            specificYear = `WHERE EXTRACT(YEAR FROM date) = ${year}`
+        }
+
+        const textQuery = `
+        SELECT
+            m.month,
+            coalesce(t.women,0) as women,
+            coalesce(t.men,0) as men,
+            coalesce((men + women),0) as total
+        FROM 
+            (SELECT
+                extract(month FROM date) AS month,
+                sum(n_womans) as women ,
+                sum(n_man) as men
+            FROM regions.achievements_base as b
+            LEFT JOIN regions.achievements_others as o on b.id = o.achievements_id 
+            ${specificYear}
+            group by month
+            ) as t
+        FULL JOIN month as m on m.id = t.month;`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
+    }
+}
+
 
 const getStatisticsAnnual = (specific) => async (request, reply) => {
     try {
@@ -190,14 +226,14 @@ const getStatisticsAnnual = (specific) => async (request, reply) => {
             if (!Number(year)) {
                 return reply.code(400).send({ error: "year not valid", status: "failed" });
             }
-            specificYear = `WHERE EXTRACT(YEAR FROM created_on) = ${year}`
+            specificYear = `WHERE EXTRACT(YEAR FROM date) = ${year}`
         }
 
         const textQuery = `
             SELECT m.month , coalesce(s.finished,0) as finished, coalesce(s.unfinished,0) as unfinished 
             FROM (
                 SELECT 
-                    extract(month FROM created_on) AS month,
+                    extract(month FROM date) AS month,
                     COUNT(CASE WHEN status_id = 1 THEN status_id ELSE NULL END) AS finished,
                     COUNT(CASE WHEN status_id != 1 THEN status_id ELSE NULL END) AS unfinished
                 FROM regions.view_achievements
@@ -222,7 +258,7 @@ const getStatisticsActivity = (specific) => async (request, reply) => {
             if (!Number(year)) {
                 return reply.code(400).send({ error: "year not valid", status: "failed" });
             }
-            specificYear = `AND EXTRACT(YEAR FROM created_on) = ${year}`
+            specificYear = `AND EXTRACT(YEAR FROM date) = ${year}`
         }
         const textQuery = `
             SELECT 
@@ -277,7 +313,7 @@ const insert = async (request, reply) => {
                         previously_scheduled,
                         observation_schedule,
                         status_id
-                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id;`
+                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id;`
         let value = [created_by, date, hour, action_id, activity_id, management_unit_id, state_id, municipality_id, parish_id, observation, previously_scheduled, observation_scheduled, status]
         let resp = await query(textQuery, value)
         id = resp.rows[0].id
@@ -388,5 +424,6 @@ module.exports = {
     countAllForMonth,
     getTableForYear,
     getTableForActivity,
-    getTableForState
+    getTableForState,
+    getTableForGender
 }
