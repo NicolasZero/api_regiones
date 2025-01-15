@@ -12,7 +12,7 @@ INSERT INTO regions.type_action OVERRIDING SYSTEM VALUE VALUES
 (3, 'Formación'),
 (4, 'OAC');
 
-SELECT pg_catalog.setval('regions.type_action_id_seq', 4, true);
+SELECT pg_catalog.setval('regions.type_action_id_seq', 5, true);
 
 INSERT INTO regions.type_activity OVERRIDING SYSTEM VALUE VALUES
 (0, 0,'NINGUNO'),
@@ -112,7 +112,7 @@ INSERT INTO regions.management_unit OVERRIDING SYSTEM VALUE VALUES
 (4, 'Gerencia de investigación y capacitación'),
 (5, 'Gerencia de oficina de atencion a la ciudadania');
 
-SELECT pg_catalog.setval('regions.management_unit_id_seq', 5, true);
+SELECT pg_catalog.setval('regions.management_unit_id_seq', 6, true);
 
 INSERT INTO regions.type_telephone_service OVERRIDING SYSTEM VALUE VALUES
 (0, 'NINGUNO'),
