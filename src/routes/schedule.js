@@ -6,7 +6,7 @@ module.exports = async function (fastify) {
   // Total de todos los previamente agendados
   fastify.get("/Previously/total", controller.countAllPreviously);
   // Todos los previamente agendados por mes (1 a 12) y año (ejm: 2025)
-  fastify.get("/Previously/total/month/:month/year/:year", controller.countAllPreviouslyForMonth);
+  fastify.get("/Previously/total/month/:month/year/:year", controller.countAllPreviouslyForMonth());
 
   // Todos los agendados
   fastify.get("/all", controller.getAllScheduled);

@@ -277,7 +277,7 @@ const insert = async (request, reply) => {
                         previously_scheduled,
                         observation_schedule,
                         status_id
-                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id;`
+                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id;`
         let value = [created_by, date, hour, action_id, activity_id, management_unit_id, state_id, municipality_id, parish_id, observation, previously_scheduled, observation_scheduled, status]
         let resp = await query(textQuery, value)
         id = resp.rows[0].id

@@ -8,7 +8,7 @@ module.exports = async function (fastify) {
   fastify.get("/total", controller.countAll);
   
   // Total de todos los logrados
-  fastify.get("/total/month/:month/year/:year", controller.countAllForMonth);
+  fastify.get("/total/month/:month/year/:year", controller.countAllForMonth());
   
   // Logrado por id
   fastify.get("/id/:id", controller.getById);

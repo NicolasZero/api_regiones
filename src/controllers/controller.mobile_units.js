@@ -13,14 +13,16 @@ const getAll = (filter) => async (request, reply) => {
 
 const countAll = (filter) => async (request, reply) => {
     try {
-        const textQuery = `SELECT count(*) FROM regions.mobile_units ${filter};`
-        const resp = await query(textQuery)
+        const { month, year } = request.params;
+        const textQuery = `SELECT count(*) FROM regions.mobile_units ${filter}`;
+        const resp = await query(textQuery, [month, year]);
         return reply.send({ status: "ok", data: resp.rows[0] });
     } catch (error) {
         console.log(error);
         return reply.code(500).send({ error: "error en la peticion", status: "failed" });
     }
 }
+
 
 const countAllForMonth = (filter) => async (request, reply) => {
     try {
