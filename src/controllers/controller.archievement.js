@@ -171,7 +171,7 @@ const getTableForState = (specific) => async (request, reply) => {
                 COUNT(CASE WHEN b.activity_id = 20 THEN b.activity_id ELSE NULL END) AS "Otros",
                 COUNT(B.*) AS total
             FROM regions.achievements_base as b
-            RIGHT JOIN states as s on s.id = b.state_id ${specificYear}
+            RIGHT JOIN states as s on s.id = b.state_id AND b.status_id = 1 ${specificYear}
             GROUP BY s.state;`
         const resp = await query(textQuery)
         return reply.send({ status: "ok", data: resp.rows });
@@ -189,26 +189,48 @@ const getTableForGender = (specific) => async (request, reply) => {
             if (!Number(year)) {
                 return reply.code(400).send({ error: "year not valid", status: "failed" });
             }
-            specificYear = `WHERE EXTRACT(YEAR FROM date) = ${year}`
+            specificYear = `AND EXTRACT(YEAR FROM date) = ${year}`
         }
 
-        const textQuery = `
+        // SELECT
+        //     m.month,
+        //     coalesce(t.women,0) as women,
+        //     coalesce(t.men,0) as men,
+        //     coalesce((men + women),0) as total
+        // FROM 
+        //     (SELECT
+        //         extract(month FROM date) AS month,
+        //         sum(n_womans) as women ,
+        //         sum(n_man) as men
+        //     FROM regions.achievements_base as b
+        //     LEFT JOIN regions.achievements_others as o on b.id = o.achievements_id 
+        //     ${specificYear}
+        //     group by month
+        //     ) as t
+        // FULL JOIN month as m on m.id = t.month;
+
+        const textQuery = `        
         SELECT
-            m.month,
+            coalesce(m.month,'SIN REGISTROS') as state,
+            coalesce(s.state,'SIN REGISTROS') as state,
             coalesce(t.women,0) as women,
             coalesce(t.men,0) as men,
             coalesce((men + women),0) as total
         FROM 
             (SELECT
                 extract(month FROM date) AS month,
+                state_id,
                 sum(n_womans) as women ,
                 sum(n_man) as men
             FROM regions.achievements_base as b
             LEFT JOIN regions.achievements_others as o on b.id = o.achievements_id 
-            ${specificYear}
-            group by month
+            WHERE status_id = 1 ${specificYear}
+            group by month, state_id
             ) as t
-        FULL JOIN month as m on m.id = t.month;`
+        FULL JOIN month as m on m.id = t.month
+        FULL JOIN states as s on s.id = t.state_id
+        ORDER BY m.id asc;`
+
         const resp = await query(textQuery)
         return reply.send({ status: "ok", data: resp.rows });
     } catch (error) {
