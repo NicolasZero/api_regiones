@@ -211,7 +211,7 @@ const getTableForGender = (specific) => async (request, reply) => {
 
         const textQuery = `        
         SELECT
-            coalesce(m.month,'SIN REGISTROS') as state,
+            coalesce(m.month,'SIN REGISTROS') as month,
             coalesce(s.state,'SIN REGISTROS') as state,
             coalesce(t.women,0) as women,
             coalesce(t.men,0) as men,
@@ -248,7 +248,7 @@ const getStatisticsAnnual = (specific) => async (request, reply) => {
             if (!Number(year)) {
                 return reply.code(400).send({ error: "year not valid", status: "failed" });
             }
-            specificYear = `WHERE EXTRACT(YEAR FROM date) = ${year}`
+            specificYear = `AND EXTRACT(YEAR FROM date) = ${year}`
         }
 
         const textQuery = `
@@ -259,7 +259,7 @@ const getStatisticsAnnual = (specific) => async (request, reply) => {
                     COUNT(CASE WHEN status_id = 1 THEN status_id ELSE NULL END) AS finished,
                     COUNT(CASE WHEN status_id != 1 THEN status_id ELSE NULL END) AS unfinished
                 FROM regions.view_achievements
-                ${specificYear}
+                WHERE status_id =1 ${specificYear}
                 group by month
             ) as s
             FULL JOIN month as m on m.id = s.month
