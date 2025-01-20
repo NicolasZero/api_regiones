@@ -88,8 +88,8 @@ const getTableForYear = (specific) => async (request, reply) => {
             COUNT(CASE WHEN extract(month FROM date) = 11 THEN 1 ELSE NULL END) AS noviembre,
             COUNT(CASE WHEN extract(month FROM date) = 12 THEN 1 ELSE NULL END) AS diciembre
         FROM regions.achievements_base as b
-        FULL JOIN regions.type_activity as a2 on a2.id = b.action_id and status_id = 1 ${specificYear}
-        FULL JOIN regions.type_action as a1 on a1.id = a2.type_action_id
+        FULL JOIN regions.type_activity as a2 on a2.id = b.activity_id and status_id = 1 ${specificYear}
+        FULL JOIN regions.type_action as a1 on a1.id = b.action_id
         WHERE a1.id != 0 AND a2.id != 0 
         GROUP BY a1.id, a1.type_action, a2.type_activity
         ORDER BY a1.id;`
