@@ -113,19 +113,17 @@ const getTableForActivity = (specific) => async (request, reply) => {
             specificYear = `AND EXTRACT(YEAR FROM b.date) = ${year}`
         }
 
-        const textQuery = `
-        SELECT
-            a1.type_action,
-            a2.type_activity,
-            COUNT(CASE WHEN status_id = 1 THEN status_id ELSE NULL END) AS finished,
-            COUNT(CASE WHEN status_id != 1 THEN status_id ELSE NULL END) AS unfinished,
-            COUNT(b.*) as total
-        FROM regions.achievements_base as b
-        FULL JOIN regions.type_activity as a2 on a2.id = b.action_id ${specificYear}
-        FULL JOIN regions.type_action as a1 on a1.id = a2.type_action_id
-        WHERE a1.id != 0 AND a2.id != 0 
-        GROUP BY a1.id, a1.type_action, a2.type_activity
-        ORDER BY a1.id;`
+        const textQuery = `        
+            SELECT 
+                a1.type_action,
+                a2.type_activity,
+                count(b.id) as finished
+            FROM regions.achievements_base as b
+            FULL JOIN regions.type_activity as a2 on a2.id = b.activity_id AND status_id=1 ${specificYear}
+            FULL JOIN regions.type_action as a1 on a1.id = b.action_id
+            WHERE a1.id != 0 AND a2.id != 0 
+            GROUP BY a1.id, a1.type_action, a2.type_activity
+            ORDER BY a1.id ASC;`
 
         const resp = await query(textQuery)
         return reply.send({ status: "ok", data: resp.rows });
