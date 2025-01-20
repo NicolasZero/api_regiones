@@ -32,8 +32,8 @@ module.exports = async function (fastify) {
   fastify.get("/statistics/table_state",controller.getTableForState(false));
   fastify.get("/statistics/table_state/year/:year",controller.getTableForState(true));
 
-  fastify.get("/statistics/table_gender",controller.getTableForState(false));
-  fastify.get("/statistics/table_gender/year/:year",controller.getTableForState(true));
+  fastify.get("/statistics/table_gender",controller.getTableForGender(false));
+  fastify.get("/statistics/table_gender/year/:year",controller.getTableForGender(true));
   
   // insertar logros o agendar
   fastify.post("/", controller.insert);

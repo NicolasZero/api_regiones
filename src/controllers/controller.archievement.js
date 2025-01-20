@@ -246,7 +246,7 @@ const getStatisticsAnnual = (specific) => async (request, reply) => {
             if (!Number(year)) {
                 return reply.code(400).send({ error: "year not valid", status: "failed" });
             }
-            specificYear = `AND EXTRACT(YEAR FROM date) = ${year}`
+            specificYear = `WHERE EXTRACT(YEAR FROM date) = ${year}`
         }
 
         const textQuery = `
@@ -257,7 +257,7 @@ const getStatisticsAnnual = (specific) => async (request, reply) => {
                     COUNT(CASE WHEN status_id = 1 THEN status_id ELSE NULL END) AS finished,
                     COUNT(CASE WHEN status_id != 1 THEN status_id ELSE NULL END) AS unfinished
                 FROM regions.view_achievements
-                WHERE status_id =1 ${specificYear}
+                 ${specificYear}
                 group by month
             ) as s
             FULL JOIN month as m on m.id = s.month
