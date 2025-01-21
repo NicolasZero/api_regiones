@@ -250,12 +250,12 @@ const getStatisticsAnnual = (specific) => async (request, reply) => {
         }
 
         const textQuery = `
-            SELECT m.month , coalesce(s.finished,0) as finished, coalesce(s.unfinished,0) as unfinished 
+            SELECT m.month , coalesce(s.completado,0) as completado, coalesce(s.no_completado,0) as no_completado 
             FROM (
                 SELECT 
                     extract(month FROM date) AS month,
-                    COUNT(CASE WHEN status_id = 1 THEN status_id ELSE NULL END) AS finished,
-                    COUNT(CASE WHEN status_id != 1 THEN status_id ELSE NULL END) AS unfinished
+                    COUNT(CASE WHEN status_id = 1 THEN status_id ELSE NULL END) AS completado,
+                    COUNT(CASE WHEN status_id != 1 THEN status_id ELSE NULL END) AS no_completado
                 FROM regions.view_achievements
                  ${specificYear}
                 group by month
