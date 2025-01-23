@@ -187,6 +187,12 @@ const insertDetails = async (request, reply) =>{
             return reply.code(500).send({ error: "Ya existe un registro", status: "failed" });
         }
 
+        // Actualiza la observacion
+        if (status !== "Completada") {            
+            await query(`UPDATE regions.social_day_achievements SET observation2 = $1, status_id = 3 WHERE id = $2;`,[obs2, id])
+            return reply.send({ status: "ok", msg: `Se actualizo con exito` });
+        }
+
         // Variables para los foreach
         // Tipo de atencion
         let textType = `${id},`

@@ -14,6 +14,7 @@ GET {{url}}/mobile_units/details/1
 ###
 POST {{url}}/mobile_units
 Content-Type: application/json
+
 {
     "id":1,
     "cantMobileUnitsRequired":25,
@@ -31,9 +32,11 @@ Content-Type: application/json
 ###
 POST {{url}}/mobile_units/details
 Content-Type: application/json
+
 {
-    "id": 1,
+    "id": 2,
     "obs2":"Observaciones de prueba",
+    "status":"No completada",
     "attentionTypes": [
         {
             "type": 1,
