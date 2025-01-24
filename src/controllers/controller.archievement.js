@@ -260,30 +260,19 @@ const getTableForGender = (specific) => async (request, reply) => {
             if (!Number(year)) {
                 return reply.code(400).send({ error: "year not valid", status: "failed" });
             }
-            specificYear = `AND EXTRACT(YEAR FROM date) = ${year}`
+            specificYear = `AND b.year = ${year}`
         }
 
         const textQuery = `        
-        SELECT
+        SELECT 
             coalesce(m.month,'SIN REGISTROS') as month,
             coalesce(s.state,'SIN REGISTROS') as state,
-            coalesce(t.women,0) as women,
-            coalesce(t.men,0) as men,
-            coalesce((men + women),0) as total
-        FROM 
-            (SELECT
-                extract(month FROM date) AS month,
-                state_id,
-                sum(n_womans) as women ,
-                sum(n_man) as men
-            FROM regions.achievements_base as b
-            LEFT JOIN regions.achievements_others as o on b.id = o.achievements_id 
-            WHERE status_id = 1 ${specificYear}
-            group by month, state_id
-            ) as t
-        FULL JOIN month as m on m.id = t.month
-        FULL JOIN states as s on s.id = t.state_id
-        ORDER BY m.id asc;`
+            sum(coalesce((women + men + victim_traff + g_violence),0))as people
+        FROM regions.view_achievements_analysis as b
+        RIGHT JOIN month as m on m.id = b.month AND status_id = 1 ${specificYear}
+        RIGHT JOIN states as s on s.id = b.state_id AND status_id = 1 ${specificYear}
+        GROUP BY m.month, s.state, m.id, s.id
+        ORDER BY m.id, s.id`
 
         const resp = await query(textQuery)
         return reply.send({ status: "ok", data: resp.rows });
