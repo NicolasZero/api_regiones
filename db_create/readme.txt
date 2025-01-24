@@ -13,3 +13,7 @@ Orden/Order
 7° - insert.regions
 -test-(if exist)
 n° - insert.data.test
+
+Nota/Note
+ES: Ejecutar los updates en orden Dia . Mes . Año
+EN: Run updates in Day . Month . Year order
