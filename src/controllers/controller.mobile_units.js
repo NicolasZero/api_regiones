@@ -218,13 +218,16 @@ const insertDetails = async (request, reply) =>{
                 a += 5
             })
 
-            attention.disabilities.forEach(disability => {
-                disability.ageRanges.forEach(e => {
-                    textDisability += `${attention.type},${attention.subType?attention.subType:0},${disability.type},${e.range},${e.men},${e.women},`
-                    textDisabilityValue += `($1,$${b+1},$${b+2},$${b+3},$${b+4},$${b+5},$${b+6}),`
-                    b += 6
+            if (attention.disabilities) {
+                attention.disabilities.forEach(disability => {
+                    disability.ageRanges.forEach(e => {
+                        textDisability += `${attention.type},${attention.subType?attention.subType:0},${disability.type},${e.range},${e.men},${e.women},`
+                        textDisabilityValue += `($1,$${b+1},$${b+2},$${b+3},$${b+4},$${b+5},$${b+6}),`
+                        b += 6
+                    })
                 })
-            })
+            }
+
 
             attention.ethnicities.forEach(ethnicity => {
                 ethnicity.ageRanges.forEach(e => {
@@ -247,16 +250,20 @@ const insertDetails = async (request, reply) =>{
         }
 
         // ===== Discapacidad ===== //
-        values = textDisability.slice(0, -1).split(",")
-        textInsert = textDisabilityValue.slice(0, -1)
-        textQuery = `INSERT INTO regions.social_day_disability (social_day_id,service_type_id,service_subtype_id,disability_id,age_range_id,n_mans,n_womans) VALUES ${textInsert};`
 
-        resp = await query(textQuery, values)
-
-        if (resp.rowCount == 0) {
-            query(`DELETE FROM regions.social_day_service_types WHERE social_day_id = $1;`,[id])
-            return reply.code(500).send({ error: "No se logro registrar", status: "failed" });
+        if (textDisabilityValue != "") {
+            values = textDisability.slice(0, -1).split(",")
+            textInsert = textDisabilityValue.slice(0, -1)
+            textQuery = `INSERT INTO regions.social_day_disability (social_day_id,service_type_id,service_subtype_id,disability_id,age_range_id,n_mans,n_womans) VALUES ${textInsert};`
+    
+            resp = await query(textQuery, values)
+    
+            if (resp.rowCount == 0) {
+                query(`DELETE FROM regions.social_day_service_types WHERE social_day_id = $1;`,[id])
+                return reply.code(500).send({ error: "No se logro registrar", status: "failed" });
+            }
         }
+
 
         // ===== Etnia ===== //
         values = textEthnicity.slice(0, -1).split(",")
