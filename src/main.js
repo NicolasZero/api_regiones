@@ -2,8 +2,9 @@ const fs = require('fs')
 const fastify = require('fastify')({logger: false})
 const cors = require('@fastify/cors')
 
-require('dotenv').config()
+// require('dotenv').config()
 
+process.loadEnvFile()
 
 fastify.register(cors, {
   origin: '*'
@@ -31,12 +32,17 @@ fastify.get('/', async (request, reply) => {
     return { hello: 'world' }
 })
 
+const {
+  PORT = 4000,
+  HOST = '0.0.0.0'
+} = process.env
+
 const start = async () => {
-    const port = process.env.PORT || 3000;
-    const host = process.env.HOST || "0.0.0.0";
+    const port = PORT ;
+    const host = HOST ;
     try {
       // Start the server on port 3000, listening on all network interfaces
-      await fastify.listen({ port: port, host: host });
+      await fastify.listen({ port, host });
       // Log a message to indicate that the API is online
       console.log(`API running on the port ${port} and host ${host}`);
     } catch (err) {

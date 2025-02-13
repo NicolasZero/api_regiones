@@ -1,6 +1,6 @@
 const { query } = require("../db/postgresql");
 const { encrypt, compare } = require("../helpers/helperEncrypt.js");
-require('dotenv').config()
+// require('dotenv').config()
 
 const auth = async (request, reply) => {
     try {        
